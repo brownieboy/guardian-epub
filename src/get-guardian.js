@@ -1,7 +1,8 @@
 import axios from "axios";
 import Epub from "epub-gen";
-import { format } from "date-fns";
-// import { utcToZonedTime } from "date-fns-tz";
+import moment from "moment-timezone";
+// import { format } from "date-fns";
+import { format, utcToZonedTime } from "date-fns-tz";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import inquirer from "inquirer";
 
@@ -77,9 +78,12 @@ async function fetchArticles(sections) {
 async function createEpub(articlesBySection) {
   // Get the current date and time
   const now = new Date();
-  console.log("TCL ~ file: get-guardian.js:80 ~ createEpub ~ now:", now);
-  const dateString = format(now, "yyyy-MM-dd");
-  const timeString = format(now, "HHmm");
+  const timeZone = "Australia/Sydney"; // Replace with the desired time zone
+  const zonedTime = utcToZonedTime(now, timeZone);
+
+  const dateString = format(zonedTime, "yyyy-MM-dd");
+  const timeString = format(zonedTime, "HHmm");
+
   const filename = `guardian-${dateString}-${timeString}.epub`;
 
   // Creating custom title for the ToC

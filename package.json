@@ -16,6 +16,8 @@
     "date-fns-tz": "^2.0.0",
     "epub-gen": "^0.1.0",
     "inquirer": "^9.2.12",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "xmlbuilder": "^15.1.1"
   },
   "devDependencies": {
