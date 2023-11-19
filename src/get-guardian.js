@@ -77,6 +77,7 @@ async function fetchArticles(sections) {
 async function createEpub(articlesBySection) {
   // Get the current date and time
   const now = new Date();
+  console.log("TCL ~ file: get-guardian.js:80 ~ createEpub ~ now:", now);
   const dateString = format(now, "yyyy-MM-dd");
   const timeString = format(now, "HHmm");
   const filename = `guardian-${dateString}-${timeString}.epub`;

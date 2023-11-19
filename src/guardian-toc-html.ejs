@@ -17,16 +17,15 @@
     <%= content[0].title %>
   </h1>
   <nav id="toc" epub:type="toc">
-    <ol>
+    <ul >
       <% content.forEach(function(item, index){ %>
         <% if(index> 0) { %>
           <% if(item.excludeFromToc) { %>
-            <!-- Section header -->
-            <li class="section-header" style="font-weight:bold;">
+            <!-- Section header without numbering -->
+            <li class="section-header" style="font-weight:bold; list-style-type: none; text-indent: -25px;">
               <%= item.title %>
             </li>
             <% } else { %>
-              <!-- Article link -->
               <li class="table-of-content">
                 <a href="<%= item.href %>">
                   <%= item.title %>
@@ -39,7 +38,7 @@
               <% } %>
                 <% } %>
                   <% }) %>
-    </ol>
+    </ul>
   </nav>
 </body>
 
