@@ -1,5 +1,7 @@
 import axios from "axios";
 import Epub from "epub-gen";
+import { format } from "date-fns";
+// import { utcToZonedTime } from "date-fns-tz";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import inquirer from "inquirer";
 
@@ -73,31 +75,32 @@ async function fetchArticles(sections) {
 }
 
 async function createEpub(articlesBySection) {
+  // Get the current date and time
   const now = new Date();
-  const dateString = `${now.getFullYear()}-${String(
-    now.getMonth() + 1,
-  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  const timeString = `${String(now.getHours()).padStart(2, "0")}:${String(
-    now.getMinutes(),
-  ).padStart(2, "0")}`;
-  const filename = `guardian-${dateString}-${timeString.replace(":", "")}.epub`;
+  const dateString = format(now, "yyyy-MM-dd");
+  const timeString = format(now, "HHmm");
+  const filename = `guardian-${dateString}-${timeString}.epub`;
 
+  // Creating custom title for the ToC
   const tocTitle = `The Guardian - ${dateString} ${timeString}`;
-  const content = [];
+  const content = [
+    {
+      title: tocTitle, // This is for the custom ToC title
+      data: `<h1>${tocTitle}</h1>`,
+      excludeFromToc: true,
+    },
+  ];
 
-  content.push({
-    title: tocTitle,
-    data: `<h1>${tocTitle}</h1>`,
-    excludeFromToc: true,
-  });
-
+  // Process each section and its articles
   articlesBySection.forEach(sectionGroup => {
+    // Add section header as non-link in ToC
     content.push({
       title: sectionGroup.section.toUpperCase(),
       data: `<h2 style="font-weight:bold;">${sectionGroup.section.toUpperCase()}</h2>`,
       excludeFromToc: true,
     });
 
+    // Add articles within the section
     sectionGroup.articles.forEach(article => {
       content.push({
         title: article.webTitle,
@@ -108,12 +111,15 @@ async function createEpub(articlesBySection) {
     });
   });
 
+  // EPUB options including the custom ToC template path
   const options = {
     title: "The Guardian Content",
     author: "The Guardian",
     content: content,
+    customHtmlTocTemplatePath: "./src/guardian-toc-html.ejs", // Path to your custom EJS template
   };
 
+  // Creating the EPUB
   try {
     await new Epub(options, filename).promise;
     console.log(`EPUB file created successfully: ${filename}`);
