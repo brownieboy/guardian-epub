@@ -1,10 +1,16 @@
 import axios from "axios";
 import Epub from "epub-gen";
-import moment from "moment-timezone";
-// import { format } from "date-fns";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import inquirer from "inquirer";
+
+// Get the current date and time
+const now = new Date();
+const timeZone = "Australia/Sydney"; // Replace with the desired time zone
+const zonedTime = utcToZonedTime(now, timeZone);
+const dateString = format(zonedTime, "yyyy-MM-dd");
+const timeString = format(zonedTime, "HHmm");
+const timeStringDisplay = format(zonedTime, "HH:mm");
 
 function loadApiKey() {
   try {
@@ -76,18 +82,10 @@ async function fetchArticles(sections) {
 }
 
 async function createEpub(articlesBySection) {
-  // Get the current date and time
-  const now = new Date();
-  const timeZone = "Australia/Sydney"; // Replace with the desired time zone
-  const zonedTime = utcToZonedTime(now, timeZone);
-
-  const dateString = format(zonedTime, "yyyy-MM-dd");
-  const timeString = format(zonedTime, "HHmm");
-
   const filename = `guardian-${dateString}-${timeString}.epub`;
 
   // Creating custom title for the ToC
-  const tocTitle = `The Guardian - ${dateString} ${timeString}`;
+  const tocTitle = `The Guardian - ${dateString} ${timeStringDisplay}`;
   const content = [
     {
       title: tocTitle, // This is for the custom ToC title
@@ -118,7 +116,7 @@ async function createEpub(articlesBySection) {
 
   // EPUB options including the custom ToC template path
   const options = {
-    title: "The Guardian Content",
+    title: `The Guardian ${dateString}:${timeStringDisplay}`,
     author: "The Guardian",
     content: content,
     customHtmlTocTemplatePath: "./src/guardian-toc-html.ejs", // Path to your custom EJS template
