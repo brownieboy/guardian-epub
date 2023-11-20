@@ -1,5 +1,6 @@
 import axios from "axios";
 import Epub from "epub-gen";
+import { parseISO } from "date-fns";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import inquirer from "inquirer";
@@ -109,6 +110,10 @@ async function createEpub(articlesBySection) {
         title: article.webTitle,
         data: article.fields.body,
         author: article.fields.byline,
+        publishedDate: format(
+          parseISO(article.fields.firstPublicationDate),
+          "dd MMM",
+        ),
         excludeFromToc: false,
       });
     });
