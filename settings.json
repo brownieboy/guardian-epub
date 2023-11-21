@@ -1,14 +1,17 @@
 {
-    "sections": [
-        "commentisfree",
-        "environment",
-        "film",
-        "games",
-        "music",
-        "politics",
-        "technology",
-        "uk-news",
-        "world"
-    ],
-    "lastRun": "2023-11-21T10:23:41.257Z"
+  "sections": [
+    "commentisfree",
+    "environment",
+    "film",
+    "games",
+    "music",
+    "politics",
+    "technology",
+    "uk-news",
+    "world"
+  ],
+  "lastRun": "2023-11-21T10:42:58.704Z",
+  "sectionsOrder": [
+    { "section": "uk-news", "order": 10, "politics": 20, "world": 30 }
+  ]
 }
