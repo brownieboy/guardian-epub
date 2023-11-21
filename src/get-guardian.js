@@ -1,6 +1,6 @@
 import axios from "axios";
 import Epub from "epub-gen";
-import { formatISO, parseISO, isAfter, startOfDay } from "date-fns";
+import { formatISO, parseISO, startOfDay } from "date-fns";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import inquirer from "inquirer";
@@ -25,6 +25,19 @@ function loadApiKey() {
   }
 }
 
+function loadSectionsOrder() {
+  if (existsSync("settings.json")) {
+    try {
+      const settings = JSON.parse(readFileSync("settings.json", "utf8"));
+      return settings.sectionsOrder ? settings.sectionsOrder[0] : {};
+    } catch (error) {
+      console.error("Error loading sections order from settings.json:", error);
+      return {};
+    }
+  }
+  return {};
+}
+
 function loadLastRunDate() {
   if (existsSync("settings.json")) {
     try {
@@ -38,21 +51,13 @@ function loadLastRunDate() {
   return null;
 }
 
-// function filterRecentArticles(articles) {
-//   const lastRunDate = loadLastRunDate();
-
-//   if (!lastRunDate) {
-//     return articles; // If there's no last run date, return all articles
-//   }
-
-//   const startOfLastRunDate = startOfDay(lastRunDate);
-
-//   return articles.filter(article => {
-//     const publishedDate = new Date(article.fields.firstPublicationDate);
-//     const startOfPublishedDate = startOfDay(publishedDate);
-//     return isAfter(startOfPublishedDate, startOfLastRunDate);
-//   });
-// }
+function sortSections(sections, sectionsOrder) {
+  return sections.sort((a, b) => {
+    const orderA = sectionsOrder[a] || Number.MAX_VALUE;
+    const orderB = sectionsOrder[b] || Number.MAX_VALUE;
+    return orderA - orderB;
+  });
+}
 
 async function fetchSections() {
   try {
@@ -87,12 +92,19 @@ async function selectSections(sections, defaultSections = []) {
 
 async function fetchArticles(sections) {
   let allArticlesBySection = [];
+  const sectionsOrder = loadSectionsOrder();
+  const sortedSections = sortSections(sections, sectionsOrder);
+  console.log(
+    "TCL ~ file: get-guardian.js:97 ~ fetchArticles ~ sortedSections:",
+    sortedSections,
+  );
+
   const lastRunDate = loadLastRunDate();
   const fromDate = lastRunDate
     ? formatISO(startOfDay(lastRunDate), { representation: "date" })
     : null;
 
-  for (const section of sections) {
+  for (const section of sortedSections) {
     try {
       const params = {
         "api-key": API_KEY,
@@ -174,16 +186,30 @@ async function createEpub(articlesBySection) {
 
 function saveSettings({ sections }) {
   const nowIso = new Date().toISOString();
-  const settings = {
-    sections: sections,
-    lastRun: nowIso,
-  };
 
+  // Read existing settings and update only specific properties
+  let settings = {};
+  if (existsSync("settings.json")) {
+    try {
+      settings = JSON.parse(readFileSync("settings.json", "utf8"));
+    } catch (error) {
+      console.error(
+        "Error reading existing settings from settings.json:",
+        error,
+      );
+    }
+  }
+
+  // Update only the 'sections' and 'lastRun' properties
+  settings.sections = sections;
+  settings.lastRun = nowIso;
+
+  // Write the updated settings back to the file
   try {
     writeFileSync("settings.json", JSON.stringify(settings, null, 4));
     console.log("Settings saved to settings.json");
   } catch (error) {
-    console.error("Error saving settings to settings.json:", error);
+    console.error("Error saving updated settings to settings.json:", error);
   }
 }
 
