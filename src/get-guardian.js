@@ -1,6 +1,6 @@
 import axios from "axios";
 import Epub from "epub-gen";
-import { parseISO } from "date-fns";
+import { formatISO, parseISO, isAfter, startOfDay } from "date-fns";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import inquirer from "inquirer";
@@ -13,6 +13,8 @@ const dateString = format(zonedTime, "yyyy-MM-dd");
 const timeString = format(zonedTime, "HHmm");
 const timeStringDisplay = format(zonedTime, "HH:mm");
 
+const API_KEY = loadApiKey();
+
 function loadApiKey() {
   try {
     const jsonData = readFileSync("guardian-open-platform-key.json");
@@ -23,7 +25,34 @@ function loadApiKey() {
   }
 }
 
-const API_KEY = loadApiKey();
+function loadLastRunDate() {
+  if (existsSync("settings.json")) {
+    try {
+      const settings = JSON.parse(readFileSync("settings.json", "utf8"));
+      return settings.lastRun ? new Date(settings.lastRun) : null;
+    } catch (error) {
+      console.error("Error loading last run date from settings.json:", error);
+      return null;
+    }
+  }
+  return null;
+}
+
+// function filterRecentArticles(articles) {
+//   const lastRunDate = loadLastRunDate();
+
+//   if (!lastRunDate) {
+//     return articles; // If there's no last run date, return all articles
+//   }
+
+//   const startOfLastRunDate = startOfDay(lastRunDate);
+
+//   return articles.filter(article => {
+//     const publishedDate = new Date(article.fields.firstPublicationDate);
+//     const startOfPublishedDate = startOfDay(publishedDate);
+//     return isAfter(startOfPublishedDate, startOfLastRunDate);
+//   });
+// }
 
 async function fetchSections() {
   try {
@@ -58,17 +87,24 @@ async function selectSections(sections, defaultSections = []) {
 
 async function fetchArticles(sections) {
   let allArticlesBySection = [];
+  const lastRunDate = loadLastRunDate();
+  const fromDate = lastRunDate
+    ? formatISO(startOfDay(lastRunDate), { representation: "date" })
+    : null;
 
   for (const section of sections) {
     try {
+      const params = {
+        "api-key": API_KEY,
+        "show-fields": "all",
+      };
+      if (fromDate) {
+        params["from-date"] = fromDate;
+      }
+
       const response = await axios.get(
         `https://content.guardianapis.com/${section}`,
-        {
-          params: {
-            "api-key": API_KEY,
-            "show-fields": "all",
-          },
-        },
+        { params },
       );
       allArticlesBySection.push({
         section,
@@ -136,22 +172,29 @@ async function createEpub(articlesBySection) {
   }
 }
 
-function saveSectionsToFile(sections) {
+function saveSettings({ sections }) {
+  const nowIso = new Date().toISOString();
+  const settings = {
+    sections: sections,
+    lastRun: nowIso,
+  };
+
   try {
-    writeFileSync("sections.json", JSON.stringify(sections, null, 4));
-    console.log("Selected sections saved to sections.json");
+    writeFileSync("settings.json", JSON.stringify(settings, null, 4));
+    console.log("Settings saved to settings.json");
   } catch (error) {
-    console.error("Error saving sections to file:", error);
+    console.error("Error saving settings to settings.json:", error);
   }
 }
 
-function loadSectionsFromFile() {
-  if (existsSync("sections.json")) {
+function loadSectionsFromSettingsFile() {
+  if (existsSync("settings.json")) {
     try {
-      const data = readFileSync("sections.json");
-      return JSON.parse(data);
+      const settings = JSON.parse(readFileSync("settings.json"));
+      return settings.sections || [];
     } catch (error) {
-      console.error("Error loading sections from file:", error);
+      console.error("Error loading sections from settings.json:", error);
+      return [];
     }
   }
   return [];
@@ -164,14 +207,14 @@ async function main() {
     return;
   }
 
-  const defaultSections = loadSectionsFromFile();
+  const defaultSections = loadSectionsFromSettingsFile();
   const selectedSections = await selectSections(sections, defaultSections);
   if (selectedSections.length === 0) {
     console.log("No sections selected.");
     return;
   }
 
-  saveSectionsToFile(selectedSections);
+  saveSettings({ sections: selectedSections });
 
   const articlesBySection = await fetchArticles(selectedSections);
   if (articlesBySection.length > 0) {
