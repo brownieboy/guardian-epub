@@ -25,31 +25,26 @@ function loadApiKey() {
   }
 }
 
-function loadSectionsOrder() {
-  if (existsSync("settings.json")) {
-    try {
-      const settings = JSON.parse(readFileSync("settings.json", "utf8"));
-      return settings.sectionsOrder ? settings.sectionsOrder[0] : {};
-    } catch (error) {
-      console.error("Error loading sections order from settings.json:", error);
-      return {};
-    }
-  }
-  return {};
-}
+const createSettingsLoader = () => {
+  let settingsCache = null;
 
-function loadLastRunDate() {
-  if (existsSync("settings.json")) {
-    try {
-      const settings = JSON.parse(readFileSync("settings.json", "utf8"));
-      return settings.lastRun ? new Date(settings.lastRun) : null;
-    } catch (error) {
-      console.error("Error loading last run date from settings.json:", error);
-      return null;
+  const loadSettings = key => {
+    if (settingsCache === null && existsSync("settings.json")) {
+      try {
+        settingsCache = JSON.parse(readFileSync("settings.json", "utf8"));
+      } catch (error) {
+        console.error("Error loading settings from settings.json:", error);
+        settingsCache = {}; // Use an empty object if there's an error
+      }
     }
-  }
-  return null;
-}
+    return settingsCache[key];
+  };
+  return loadSettings;
+};
+
+const loadSections = () => createSettingsLoader()("sections") || [];
+const loadSectionsOrder = () => createSettingsLoader()("sectionsOrder") || {};
+const loadLastRunDate = () => createSettingsLoader()("lastRun") || null;
 
 function sortSections(sections, sectionsOrder) {
   return sections.sort((a, b) => {
@@ -93,13 +88,14 @@ async function selectSections(sections, defaultSections = []) {
 async function fetchArticles(sections) {
   let allArticlesBySection = [];
   const sectionsOrder = loadSectionsOrder();
+  console.log("TCL ~ file: get-guardian.js:91 ~ fetchArticles ~ sectionsOrder:", sectionsOrder);
   const sortedSections = sortSections(sections, sectionsOrder);
   console.log(
     "TCL ~ file: get-guardian.js:97 ~ fetchArticles ~ sortedSections:",
     sortedSections,
   );
 
-  const lastRunDate = loadLastRunDate();
+  const lastRunDate = parseISO(loadLastRunDate());
   const fromDate = lastRunDate
     ? formatISO(startOfDay(lastRunDate), { representation: "date" })
     : null;
@@ -213,19 +209,6 @@ function saveSettings({ sections }) {
   }
 }
 
-function loadSectionsFromSettingsFile() {
-  if (existsSync("settings.json")) {
-    try {
-      const settings = JSON.parse(readFileSync("settings.json"));
-      return settings.sections || [];
-    } catch (error) {
-      console.error("Error loading sections from settings.json:", error);
-      return [];
-    }
-  }
-  return [];
-}
-
 async function main() {
   const sections = await fetchSections();
   if (sections.length === 0) {
@@ -233,7 +216,7 @@ async function main() {
     return;
   }
 
-  const defaultSections = loadSectionsFromSettingsFile();
+  const defaultSections = loadSections();
   const selectedSections = await selectSections(sections, defaultSections);
   if (selectedSections.length === 0) {
     console.log("No sections selected.");
