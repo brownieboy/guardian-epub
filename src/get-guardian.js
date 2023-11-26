@@ -96,7 +96,7 @@ async function fetchArticles(sections) {
   );
 
   const lastRunDate = parseISO(loadLastRunDate());
-  const fromDate = lastRunDate
+  // const fromDate = lastRunDate
     ? formatISO(startOfDay(lastRunDate), { representation: "date" })
     : null;
 
