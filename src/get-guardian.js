@@ -106,9 +106,9 @@ async function fetchArticles(sections) {
         "api-key": API_KEY,
         "show-fields": "all",
       };
-      if (fromDate) {
-        params["from-date"] = fromDate;
-      }
+      // if (fromDate) {
+      //   params["from-date"] = fromDate;
+      // }
 
       const response = await axios.get(
         `https://content.guardianapis.com/${section}`,

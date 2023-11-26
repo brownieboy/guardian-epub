@@ -10,10 +10,10 @@
         "uk-news",
         "world"
     ],
-    "lastRun": "2023-11-22T10:22:59.421Z",
     "sectionsOrder": {
         "uk-news": 10,
         "politics": 20,
         "world": 30
-    }
+    },
+    "lastRun": "2023-11-26T07:07:14.826Z"
 }
