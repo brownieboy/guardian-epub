@@ -1,6 +1,6 @@
 import axios from "axios";
 import Epub from "epub-gen";
-import { formatISO, parseISO, startOfDay } from "date-fns";
+import { parseISO } from "date-fns";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import inquirer from "inquirer";
@@ -44,7 +44,7 @@ const createSettingsLoader = () => {
 
 const loadSections = () => createSettingsLoader()("sections") || [];
 const loadSectionsOrder = () => createSettingsLoader()("sectionsOrder") || {};
-const loadLastRunDate = () => createSettingsLoader()("lastRun") || null;
+// const loadLastRunDate = () => createSettingsLoader()("lastRun") || null;
 
 function sortSections(sections, sectionsOrder) {
   return sections.sort((a, b) => {
