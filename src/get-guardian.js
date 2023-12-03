@@ -88,12 +88,7 @@ async function selectSections(sections, defaultSections = []) {
 async function fetchArticles(sections) {
   let allArticlesBySection = [];
   const sectionsOrder = loadSectionsOrder();
-  console.log("TCL ~ file: get-guardian.js:91 ~ fetchArticles ~ sectionsOrder:", sectionsOrder);
   const sortedSections = sortSections(sections, sectionsOrder);
-  console.log(
-    "TCL ~ file: get-guardian.js:97 ~ fetchArticles ~ sortedSections:",
-    sortedSections,
-  );
 
   // const lastRunDate = parseISO(loadLastRunDate());
   // const fromDate = lastRunDate
