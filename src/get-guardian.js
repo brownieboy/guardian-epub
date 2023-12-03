@@ -95,10 +95,10 @@ async function fetchArticles(sections) {
     sortedSections,
   );
 
-  const lastRunDate = parseISO(loadLastRunDate());
+  // const lastRunDate = parseISO(loadLastRunDate());
   // const fromDate = lastRunDate
-    ? formatISO(startOfDay(lastRunDate), { representation: "date" })
-    : null;
+  //   ? formatISO(startOfDay(lastRunDate), { representation: "date" })
+  //   : null;
 
   for (const section of sortedSections) {
     try {
