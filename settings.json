@@ -1,12 +1,10 @@
 {
     "sections": [
         "commentisfree",
-        "environment",
-        "film",
-        "games",
+        "extra",
+        "football",
+        "media",
         "music",
-        "politics",
-        "technology",
         "uk-news",
         "world"
     ],
@@ -15,5 +13,5 @@
         "politics": 20,
         "world": 30
     },
-    "lastRun": "2023-12-03T06:13:52.290Z"
+    "lastRun": "2023-12-04T11:05:09.264Z"
 }

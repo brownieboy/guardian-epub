@@ -1,6 +1,7 @@
 import axios from "axios";
+import { JSDOM } from "jsdom";
 import Epub from "epub-gen";
-import { parseISO } from "date-fns";
+import { formatISO, parseISO } from "date-fns";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import inquirer from "inquirer";
@@ -23,6 +24,46 @@ function loadApiKey() {
     console.error("Error reading API key from file:", error);
     process.exit(1);
   }
+}
+
+function createUrlToFileMap(articlesBySection) {
+  const urlToFileMap = {};
+
+  let fileIndex = 1;
+  articlesBySection.forEach(sectionGroup => {
+    sectionGroup.articles.forEach(article => {
+      const titlePart = article.webTitle
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]+/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+      const filename = `${fileIndex}_${titlePart}.xhtml`;
+
+      urlToFileMap[article.webUrl] = filename;
+
+      fileIndex++;
+    });
+  });
+
+  return urlToFileMap;
+}
+
+function updateArticleLinks(articleContent, urlToFileMap) {
+  // If we've pulled a page down locally, then change URLs to point to there and
+  // not to the online version
+  const dom = new JSDOM(articleContent);
+  const document = dom.window.document;
+
+  const links = document.querySelectorAll("a");
+  links.forEach(link => {
+    const href = link.href;
+    if (href && href.includes("theguardian.com") && urlToFileMap[href]) {
+      link.href = urlToFileMap[href];
+    }
+  });
+
+  return dom.serialize();
 }
 
 const createSettingsLoader = () => {
@@ -124,6 +165,9 @@ async function fetchArticles(sections) {
 async function createEpub(articlesBySection) {
   const filename = `guardian-${dateString}-${timeString}.epub`;
 
+  // let urlToFileMap = createUrlToFileMap(articlesBySection);
+  const urlToFileMap = createUrlToFileMap(articlesBySection);
+
   // Creating custom title for the ToC
   const tocTitle = `The Guardian - ${dateString} ${timeStringDisplay}`;
   const content = [
@@ -145,15 +189,31 @@ async function createEpub(articlesBySection) {
 
     // Add articles within the section
     sectionGroup.articles.forEach(article => {
+      const updatedContent = updateArticleLinks(
+        article.fields.body,
+        urlToFileMap,
+      );
+
+      // Generate a filename for the chapter
+      const filename = urlToFileMap[article.webUrl]; // Use the filename from the mapping
+
+      let publishDate;
+      try {
+        publishDate = format(
+          parseISO(article?.fields?.firstPublicationDate),
+          "dd MMM",
+        );
+      } catch (e) {
+        publishDate = formatISO(new Date());
+      }
+
       content.push({
         title: article.webTitle,
-        data: article.fields.body,
+        data: updatedContent,
         author: article.fields.byline,
-        publishedDate: format(
-          parseISO(article.fields.firstPublicationDate),
-          "dd MMM",
-        ),
+        publishedDate: publishDate,
         excludeFromToc: false,
+        filename: filename, // Specify the filename for the chapter
       });
     });
   });
