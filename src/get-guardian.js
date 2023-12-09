@@ -1,4 +1,5 @@
 import axios from "axios";
+import ora from "ora";
 import { JSDOM } from "jsdom";
 import Epub from "epub-gen";
 import { formatISO, parseISO } from "date-fns";
@@ -280,11 +281,14 @@ async function main() {
 
   saveSettings({ sections: selectedSections });
 
+  const spinner = ora("Fetching articles...").start();
+
   const articlesBySection = await fetchArticles(selectedSections);
   if (articlesBySection.length > 0) {
+    spinner.succeed("Articles fetched successfully.");
     await createEpub(articlesBySection);
   } else {
-    console.log("No articles found to create EPUB.");
+    spinner.succeed("Articles fetched successfully.");
   }
 }
 
