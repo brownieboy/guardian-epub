@@ -5,9 +5,11 @@ import ora from "ora";
 import { JSDOM } from "jsdom";
 import Epub from "epub-gen";
 import { formatISO, parseISO } from "date-fns";
+import os from "os";
 import { format, utcToZonedTime } from "date-fns-tz";
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
 import inquirer from "inquirer";
+import path from "path";
 
 // Get the current date and time
 const now = new Date();
@@ -17,11 +19,27 @@ const dateString = format(zonedTime, "yyyy-MM-dd");
 const timeString = format(zonedTime, "HHmm");
 const timeStringDisplay = format(zonedTime, "HH:mm");
 
+const userHomeDir = os.homedir();
+const configDir = path.join(userHomeDir, ".guardianEpub");
+if (!existsSync(configDir)) {
+  mkdirSync(configDir);
+}
+
+const apiKeyFile = path.join(configDir, "guardian-open-platform-key.json");
+console.log("TCL ~ file: get-guardian.js:29 ~ apiKeyFile:", apiKeyFile);
+
+if (!existsSync(apiKeyFile)) {
+  console.log(
+    "API key file not found.  Please run command 'guardianEpubKey' to initialise.  You will need your Guardian API key ready to paste in.",
+  );
+  process.exit(1);
+}
+
 const API_KEY = loadApiKey();
 
 function loadApiKey() {
   try {
-    const jsonData = readFileSync("guardian-open-platform-key.json");
+    const jsonData = readFileSync(apiKeyFile);
     return JSON.parse(jsonData).API_KEY;
   } catch (error) {
     console.error("Error reading API key from file:", error);
