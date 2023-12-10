@@ -38,7 +38,10 @@ const createSettingsLoader = () => {
   let settingsCache = { sections: [] };
 
   const loadSettings = key => {
-    if (settingsCache === null && existsSync(settingsFile)) {
+    if (
+      (settingsCache === null || settingsCache?.sections?.length === 0) &&
+      existsSync(settingsFile)
+    ) {
       try {
         settingsCache = JSON.parse(readFileSync(settingsFile, "utf8"));
       } catch (error) {
@@ -58,10 +61,6 @@ export const loadSectionsOrder = () =>
 export const saveSettings = ({ sections }) => {
   const nowIso = new Date().toISOString();
   const settingsFile = getSettingsFile();
-  console.log(
-    "TCL ~ file: files.js:61 ~ saveSettings ~ settingsFile:",
-    settingsFile,
-  );
 
   // Read existing settings and update only specific properties
   let settings = {};
