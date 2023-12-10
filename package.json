@@ -7,6 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "guardianEpub": "./src/get-guardian.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
