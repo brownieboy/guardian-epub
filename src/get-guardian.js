@@ -7,7 +7,7 @@ import Epub from "epub-gen";
 import { formatISO, parseISO } from "date-fns";
 import os from "os";
 import { format, utcToZonedTime } from "date-fns-tz";
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
+import { mkdirSync, existsSync } from "fs";
 import inquirer from "inquirer";
 import { fileURLToPath } from "url";
 import path, { dirname, join } from "path";

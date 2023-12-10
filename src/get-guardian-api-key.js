@@ -4,10 +4,6 @@ import { getApiFile, setApiKey } from "./utils/files.js";
 
 async function saveGuardianApiKey() {
   const apiFile = getApiFile();
-  console.log(
-    "TCL ~ file: get-guardian-api-key.js:10 ~ saveGuardianApiKey ~ apiFile:",
-    apiFile,
-  );
 
   // Prompt the user for the API key
   const answers = await inquirer.prompt([

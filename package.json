@@ -9,7 +9,8 @@
   },
   "bin": {
     "guardianEpub": "./src/get-guardian.js",
-    "guardianEpubKey": "./src/get-guardian-api-key.js"
+    "guardianEpubKey": "./src/get-guardian-api-key.js",
+    "guardianEpubOrderSections": "./src/reorder-sections.js"
   },
   "keywords": [],
   "author": "",

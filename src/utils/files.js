@@ -58,8 +58,8 @@ export const loadSections = () => createSettingsLoader()("sections") || [];
 export const loadSectionsOrder = () =>
   createSettingsLoader()("sectionsOrder") || {};
 
-export const saveSettings = ({ sections }) => {
-  const nowIso = new Date().toISOString();
+export const saveSettings = ({ sections, sectionsOrder }) => {
+  // const nowIso = new Date().toISOString();
   const settingsFile = getSettingsFile();
 
   // Read existing settings and update only specific properties
@@ -75,9 +75,14 @@ export const saveSettings = ({ sections }) => {
     }
   }
 
-  // Update only the 'sections' and 'lastRun' properties
-  settings.sections = sections;
-  settings.lastRun = nowIso;
+  // Update only the 'sections' and 'sectionsOrder' properties
+  if (sections) {
+    settings.sections = sections;
+  }
+
+  if (sectionsOrder) {
+    settings.sectionsOrder = sectionsOrder;
+  }
 
   // Write the updated settings back to the file
   try {
