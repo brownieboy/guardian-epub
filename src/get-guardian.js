@@ -9,7 +9,14 @@ import os from "os";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
 import inquirer from "inquirer";
-import path from "path";
+import { fileURLToPath } from "url";
+import path, { dirname, join } from "path";
+import {
+  getApiKey,
+  loadSectionsOrder,
+  loadSections,
+  saveSettings,
+} from "./utils/files.js";
 
 // Get the current date and time
 const now = new Date();
@@ -25,26 +32,13 @@ if (!existsSync(configDir)) {
   mkdirSync(configDir);
 }
 
-const apiKeyFile = path.join(configDir, "guardian-open-platform-key.json");
-console.log("TCL ~ file: get-guardian.js:29 ~ apiKeyFile:", apiKeyFile);
+const API_KEY = getApiKey();
 
-if (!existsSync(apiKeyFile)) {
+if (!API_KEY) {
   console.log(
     "API key file not found.  Please run command 'guardianEpubKey' to initialise.  You will need your Guardian API key ready to paste in.",
   );
   process.exit(1);
-}
-
-const API_KEY = loadApiKey();
-
-function loadApiKey() {
-  try {
-    const jsonData = readFileSync(apiKeyFile);
-    return JSON.parse(jsonData).API_KEY;
-  } catch (error) {
-    console.error("Error reading API key from file:", error);
-    process.exit(1);
-  }
 }
 
 function createUrlToFileMap(articlesBySection) {
@@ -86,27 +80,6 @@ function updateArticleLinks(articleContent, urlToFileMap) {
 
   return dom.serialize();
 }
-
-const createSettingsLoader = () => {
-  let settingsCache = null;
-
-  const loadSettings = key => {
-    if (settingsCache === null && existsSync("settings.json")) {
-      try {
-        settingsCache = JSON.parse(readFileSync("settings.json", "utf8"));
-      } catch (error) {
-        console.error("Error loading settings from settings.json:", error);
-        settingsCache = {}; // Use an empty object if there's an error
-      }
-    }
-    return settingsCache[key];
-  };
-  return loadSettings;
-};
-
-const loadSections = () => createSettingsLoader()("sections") || [];
-const loadSectionsOrder = () => createSettingsLoader()("sectionsOrder") || {};
-// const loadLastRunDate = () => createSettingsLoader()("lastRun") || null;
 
 function sortSections(sections, sectionsOrder) {
   return sections.sort((a, b) => {
@@ -239,12 +212,15 @@ async function createEpub(articlesBySection) {
     });
   });
 
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const tocTemplatePath = join(__dirname, "guardian-toc-html.ejs");
+
   // EPUB options including the custom ToC template path
   const options = {
     title: `The Guardian ${dateString}:${timeStringDisplay}`,
     author: "The Guardian",
     content: content,
-    customHtmlTocTemplatePath: "./src/guardian-toc-html.ejs", // Path to your custom EJS template
+    customHtmlTocTemplatePath: tocTemplatePath, // Path to your custom EJS template
   };
 
   // Creating the EPUB
@@ -253,35 +229,6 @@ async function createEpub(articlesBySection) {
     console.log(`EPUB file created successfully: ${filename}`);
   } catch (error) {
     console.error("Error creating EPUB file:", error);
-  }
-}
-
-function saveSettings({ sections }) {
-  const nowIso = new Date().toISOString();
-
-  // Read existing settings and update only specific properties
-  let settings = {};
-  if (existsSync("settings.json")) {
-    try {
-      settings = JSON.parse(readFileSync("settings.json", "utf8"));
-    } catch (error) {
-      console.error(
-        "Error reading existing settings from settings.json:",
-        error,
-      );
-    }
-  }
-
-  // Update only the 'sections' and 'lastRun' properties
-  settings.sections = sections;
-  settings.lastRun = nowIso;
-
-  // Write the updated settings back to the file
-  try {
-    writeFileSync("settings.json", JSON.stringify(settings, null, 4));
-    console.log("Settings saved to settings.json");
-  } catch (error) {
-    console.error("Error saving updated settings to settings.json:", error);
   }
 }
 
