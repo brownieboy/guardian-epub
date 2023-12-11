@@ -10,12 +10,10 @@ import { format, utcToZonedTime } from "date-fns-tz";
 import { mkdirSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import path, { dirname, join } from "path";
-import inquirer from "inquirer";
 import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const { Sort } = require("enquirer");
-
 import { getApiKey, loadSections, saveSettings } from "./utils/files.js";
+const require = createRequire(import.meta.url);
+const { MultiSelect, Sort } = require("enquirer");
 
 // Get the current date and time
 const now = new Date();
@@ -113,21 +111,29 @@ async function fetchSections() {
 }
 
 async function selectSections(sections, defaultSections = []) {
-  const answers = await inquirer.prompt([
-    {
-      type: "checkbox",
-      pageSize: 15,
-      name: "selectedSections",
-      message: "Select sections to fetch articles from:",
-      choices: sections.map(section => ({
-        name: section,
-        value: section,
-        checked: defaultSections.includes(section),
-      })),
+  const choices = sections.map(section => ({
+    name: section,
+    value: section,
+    // Mark as selected if it's a default section
+    enabled: defaultSections.includes(section),
+  }));
+  const prompt = new MultiSelect({
+    name: "selectedSections",
+    limit: 15,
+    message: "Select sections to fetch articles from:",
+    choices,
+    result(names) {
+      return this.map(names);
     },
-  ]);
+  });
 
-  return answers.selectedSections;
+  try {
+    const answer = await prompt.run();
+    return answer;
+  } catch (error) {
+    console.error("Error: ", error);
+    return []; // Return an empty array in case of error or if the prompt was cancelled
+  }
 }
 
 async function fetchArticles(sections) {

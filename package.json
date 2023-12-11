@@ -21,7 +21,6 @@
     "date-fns-tz": "^2.0.0",
     "enquirer": "^2.4.1",
     "epub-gen": "^0.1.0",
-    "inquirer": "^9.2.12",
     "jsdom": "^23.0.1",
     "ora": "^7.0.1",
     "xmlbuilder": "^15.1.1"
