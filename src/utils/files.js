@@ -55,8 +55,8 @@ const createSettingsLoader = () => {
 };
 
 export const loadSections = () => createSettingsLoader()("sections") || [];
-export const loadSectionsOrder = () =>
-  createSettingsLoader()("sectionsOrder") || {};
+// export const loadSectionsOrder = () =>
+//   createSettingsLoader()("sectionsOrder") || {};
 
 export const saveSettings = ({ sections, sectionsOrder }) => {
   // const nowIso = new Date().toISOString();

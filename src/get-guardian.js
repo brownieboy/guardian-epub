@@ -8,15 +8,14 @@ import { formatISO, parseISO } from "date-fns";
 import os from "os";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { mkdirSync, existsSync } from "fs";
-import inquirer from "inquirer";
 import { fileURLToPath } from "url";
 import path, { dirname, join } from "path";
-import {
-  getApiKey,
-  loadSectionsOrder,
-  loadSections,
-  saveSettings,
-} from "./utils/files.js";
+import inquirer from "inquirer";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const { Sort } = require("enquirer");
+
+import { getApiKey, loadSections, saveSettings } from "./utils/files.js";
 
 // Get the current date and time
 const now = new Date();
@@ -39,6 +38,21 @@ if (!API_KEY) {
     "API key file not found.  Please run command 'guardianEpubKey' to initialise.  You will need your Guardian API key ready to paste in.",
   );
   process.exit(1);
+}
+
+async function reorderSections(sections) {
+  console.log(
+    "TCL ~ file: get-guardian.js:43 ~ reorderSections ~ sections:",
+    sections,
+  );
+  const prompt = new Sort({
+    name: "order",
+    message: "Reorder the sections (use arrow keys and space to select):",
+    choices: sections,
+  });
+
+  const result = await prompt.run();
+  return result;
 }
 
 function createUrlToFileMap(articlesBySection) {
@@ -81,14 +95,6 @@ function updateArticleLinks(articleContent, urlToFileMap) {
   return dom.serialize();
 }
 
-function sortSections(sections, sectionsOrder) {
-  return sections.sort((a, b) => {
-    const orderA = sectionsOrder[a] || Number.MAX_VALUE;
-    const orderB = sectionsOrder[b] || Number.MAX_VALUE;
-    return orderA - orderB;
-  });
-}
-
 async function fetchSections() {
   try {
     const response = await axios.get(
@@ -110,10 +116,14 @@ async function selectSections(sections, defaultSections = []) {
   const answers = await inquirer.prompt([
     {
       type: "checkbox",
+      pageSize: 15,
       name: "selectedSections",
       message: "Select sections to fetch articles from:",
-      choices: sections,
-      default: defaultSections,
+      choices: sections.map(section => ({
+        name: section,
+        value: section,
+        checked: defaultSections.includes(section),
+      })),
     },
   ]);
 
@@ -122,15 +132,13 @@ async function selectSections(sections, defaultSections = []) {
 
 async function fetchArticles(sections) {
   let allArticlesBySection = [];
-  const sectionsOrder = loadSectionsOrder();
-  const sortedSections = sortSections(sections, sectionsOrder);
 
   // const lastRunDate = parseISO(loadLastRunDate());
   // const fromDate = lastRunDate
   //   ? formatISO(startOfDay(lastRunDate), { representation: "date" })
   //   : null;
 
-  for (const section of sortedSections) {
+  for (const section of sections) {
     try {
       const params = {
         "api-key": API_KEY,
@@ -241,16 +249,23 @@ async function main() {
 
   const defaultSections = loadSections();
   const selectedSections = await selectSections(sections, defaultSections);
+
   if (selectedSections.length === 0) {
     console.log("No sections selected.");
     return;
   }
 
-  saveSettings({ sections: selectedSections });
+  const sortedSections = await reorderSections(selectedSections);
+  console.log(
+    "TCL ~ file: get-guardian.js:270 ~ main ~ sortedSections:",
+    sortedSections,
+  );
+
+  saveSettings({ sections: sortedSections });
 
   const spinner = ora("Fetching articles...").start();
 
-  const articlesBySection = await fetchArticles(selectedSections);
+  const articlesBySection = await fetchArticles(sortedSections);
   if (articlesBySection.length > 0) {
     spinner.succeed("Articles fetched successfully.");
     await createEpub(articlesBySection);
