@@ -39,10 +39,6 @@ if (!API_KEY) {
 }
 
 async function reorderSections(sections) {
-  console.log(
-    "TCL ~ file: get-guardian.js:43 ~ reorderSections ~ sections:",
-    sections,
-  );
   const prompt = new Sort({
     name: "order",
     message: "Reorder the sections (use arrow keys and space to select):",
@@ -261,11 +257,9 @@ async function main() {
     return;
   }
 
-  const sortedSections = await reorderSections(selectedSections);
-  console.log(
-    "TCL ~ file: get-guardian.js:270 ~ main ~ sortedSections:",
-    sortedSections,
-  );
+  const sectionsArray = Object.keys(selectedSections);
+
+  const sortedSections = await reorderSections(sectionsArray);
 
   saveSettings({ sections: sortedSections });
 
