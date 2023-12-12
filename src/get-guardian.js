@@ -243,11 +243,14 @@ async function createEpub(articlesBySection) {
 }
 
 async function main() {
+  let spinner = ora("Fetching sections...").start();
   const sections = await fetchSections();
   if (sections.length === 0) {
-    console.log("No sections available.");
-    return;
+    spinner.fail("No sections fetched.");
+    process.exit(1);
   }
+
+  spinner.succeed("Sections fetched successfully.");
 
   const defaultSections = loadSections();
   const selectedSections = await selectSections(sections, defaultSections);
@@ -263,14 +266,14 @@ async function main() {
 
   saveSettings({ sections: sortedSections });
 
-  const spinner = ora("Fetching articles...").start();
+  spinner = ora("Fetching articles...").start();
 
   const articlesBySection = await fetchArticles(sortedSections);
   if (articlesBySection.length > 0) {
     spinner.succeed("Articles fetched successfully.");
     await createEpub(articlesBySection);
   } else {
-    spinner.succeed("Articles fetched successfully.");
+    spinner.fail("No articles fetched.");
   }
 }
 

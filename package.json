@@ -1,7 +1,7 @@
 {
   "name": "guardian-epub",
   "version": "1.0.0",
-  "description": "",
+  "description": "Created an ePub of the Guardian from the Guardian API",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -9,8 +9,7 @@
   },
   "bin": {
     "guardianEpub": "./src/get-guardian.js",
-    "guardianEpubKey": "./src/get-guardian-api-key.js",
-    "guardianEpubOrderSections": "./src/reorder-sections.js"
+    "guardianEpubKey": "./src/get-guardian-api-key.js"
   },
   "keywords": [],
   "author": "",
