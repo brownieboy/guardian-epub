@@ -17,12 +17,11 @@ const { MultiSelect, Sort } = require("enquirer");
 
 // Get the current date and time
 const now = new Date();
-const timeZone = "Australia/Sydney"; // Replace with the desired time zone
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const zonedTime = utcToZonedTime(now, timeZone);
 const dateString = format(zonedTime, "yyyy-MM-dd");
 const timeString = format(zonedTime, "HHmm");
 const timeStringDisplay = format(zonedTime, "HH:mm");
-
 const userHomeDir = os.homedir();
 const configDir = path.join(userHomeDir, ".guardianEpub");
 if (!existsSync(configDir)) {
