@@ -242,7 +242,7 @@ async function createEpub(articlesBySection) {
 }
 
 async function main() {
-  let spinner = ora("Fetching sections...").start();
+  let spinner = ora("Fetching sections from Guardian API...").start();
   const sections = await fetchSections();
   if (sections.length === 0) {
     spinner.fail("No sections fetched.");
@@ -265,7 +265,7 @@ async function main() {
 
   saveSettings({ sections: sortedSections });
 
-  spinner = ora("Fetching articles...").start();
+  spinner = ora("Fetching articles from Guardian API...").start();
 
   const articlesBySection = await fetchArticles(sortedSections);
   if (articlesBySection.length > 0) {
