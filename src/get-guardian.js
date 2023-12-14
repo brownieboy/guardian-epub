@@ -12,6 +12,8 @@ import { fileURLToPath } from "url";
 import path, { dirname, join } from "path";
 import { createRequire } from "module";
 import { getApiKey, loadSections, saveSettings } from "./utils/files.js";
+import { sortArrayByDefaultArray } from "./utils/sort.js";
+
 const require = createRequire(import.meta.url);
 const { MultiSelect, Sort } = require("enquirer");
 
@@ -252,6 +254,7 @@ async function main() {
   spinner.succeed("Sections fetched successfully.");
 
   const defaultSections = loadSections();
+
   const selectedSections = await selectSections(sections, defaultSections);
 
   if (selectedSections.length === 0) {
@@ -260,14 +263,20 @@ async function main() {
   }
 
   const sectionsArray = Object.keys(selectedSections);
+  const sectionsArraySortedByDefault = sortArrayByDefaultArray(
+    sectionsArray,
+    defaultSections,
+  );
 
-  const sortedSections = await reorderSections(sectionsArray);
+  const userSortedSections = await reorderSections(
+    sectionsArraySortedByDefault,
+  );
 
-  saveSettings({ sections: sortedSections });
+  saveSettings({ sections: userSortedSections });
 
   spinner = ora("Fetching articles from Guardian API...").start();
 
-  const articlesBySection = await fetchArticles(sortedSections);
+  const articlesBySection = await fetchArticles(userSortedSections);
   if (articlesBySection.length > 0) {
     spinner.succeed("Articles fetched successfully.");
     await createEpub(articlesBySection);
