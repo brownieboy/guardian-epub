@@ -5,7 +5,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "guardianEpub": "./src/get-guardian.js",
+    "guardianEpubKey": "./src/get-guardian-api-key.js"
   },
   "bin": {
     "guardianEpub": "./src/get-guardian.js",
@@ -18,7 +20,7 @@
     "axios": "^1.6.2",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
-    "enquirer": "^2.4.1",
+    "enquirer": "github:brownieboy/enquirer#bugfix/270-multiselect-with-defaults",
     "epub-gen": "^0.1.0",
     "jsdom": "^23.0.1",
     "ora": "^7.0.1",
