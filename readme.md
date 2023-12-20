@@ -1,25 +1,24 @@
 # Guardian ePub
 
-Need to read the latest edition of the Guardian newspaper on your Kindle?   This is the app for you.
+Need to read the latest edition of the Guardian newspaper on your Kindle? This is the app for you.
 
 A Node application that will create an ePub book from the current edition of the Guardian, as created from the [Guardian's Open Platform](https://open-platform.theguardian.com/).
-
 
 ## Pre-requisites
 
 To run this app, you will need:
 
-1. [NodeJS](https://nodejs.org/) installed on your PC.  Node is availabe for Windows, Macintosh and Linux.  You should install version 18 or higher.
-2. A Guardian API key.  You will need to register for this at https://open-platform.theguardian.com/access/.  They are free for non-commerial use.
+1. [NodeJS](https://nodejs.org/) installed on your PC. Node is availabe for Windows, Macintosh and Linux. You should install version 18 or higher.
+2. A Guardian API key. You will need to register for this at https://open-platform.theguardian.com/access/. They are free for non-commerial use.
 3. A Kindle or some other kind of ePub reader.
-
 
 ## Installing the Package
 
 Guardian ePub is command line interface (CLI) application. It must be run from a terminal, such as:
-* Windows: Git Bash or Powershell
-* Macintosh: Terminal or iTerm
-* Linux: various, check your distro's documentation
+
+- Windows: Git Bash or Powershell
+- Macintosh: Terminal or iTerm
+- Linux: various, check your distro's documentation
 
 To install the app, the command is:
 
@@ -45,17 +44,27 @@ After that, the key will be stored in a config file and you will not need to ent
 
 ### Select your sections
 
-The script will then present you with all the sections that are available.  Pick the ones that you want to be in your ePub, using the on-screen command keys.  All articles from your selected sections will be downloaded.
+The script will then present you with all the sections that are available. Pick the ones that you want to be in your ePub, using the on-screen command keys. All articles from your selected sections will be downloaded.
 
 Hit the Return/Enter key when you're done.
 
 ### Re-order you sections (optional)
 
-By default, your sections will appear in the your ePub alphabetically, which is probably not what you want.   So the script will ask you to put them in order, using the on-screen keys again.
+By default, your sections will appear in the your ePub alphabetically, which is probably not what you want. So the script will ask you to put them in order, using the on-screen keys again.
 
 Again, hit the Return/Enter key when you're done.
 
 Your chosen order will stored in a different config file, and that order will be used the basis for all future section selections.
+
+### Demo
+
+The animated GIF below shows the process of creating the ePub, and then opening it and reading it in the Calibre eReader.
+
+![Guardian ePub in action](./capture-guardian-epub.gif)
+
+I've edited this animation to cut out the dull bits, such as the waiting for the API calls to complete. It's slower than this in real life, especially if you select a lot of sections.
+
+I've also skipped the part where you have to enter API key, as you'll likely only ever do that once.
 
 ## Troubleshooting
 
@@ -69,7 +78,7 @@ guardianEpubKey
 
 The package will prompt you to enter your key again.
 
-Alternatively, you can enter the config file directly.  The file path to the config file is:
+Alternatively, you can enter the config file directly. The file path to the config file is:
 
 ~/.guardianEpub/guardian-open-platform-key.json
 
@@ -83,4 +92,4 @@ As per its extension, the file is a JSON file, and should look like this:
 }
 ```
 
-Add or change your Guardian API Platform key where it says "put_your_key_here"
+Add or change your Guardian API Platform key where it says "put_your_key_here".

@@ -1,7 +1,7 @@
 {
   "name": "guardian-epub",
   "version": "1.0.0",
-  "description": "Created an ePub of the Guardian from the Guardian API",
+  "description": "Creates an ePub of the Guardian newspaper from the Guardian API",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -13,8 +13,11 @@
     "guardianEpub": "./src/get-guardian.js",
     "guardianEpubKey": "./src/get-guardian-api-key.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["Guardian"],
+  "author": {
+    "name": "Michael Brown",
+    "email": "brownieboy@gmail.com"
+  },
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.2",
