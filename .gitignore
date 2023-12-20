@@ -2,3 +2,5 @@
 guardian-open-platform-key.json
 *.epub
 .DS_Store
+*.tgz
+/.vscode
