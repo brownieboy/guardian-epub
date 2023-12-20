@@ -93,3 +93,7 @@ As per its extension, the file is a JSON file, and should look like this:
 ```
 
 Add or change your Guardian API Platform key where it says "put_your_key_here".
+
+## Changelog
+
+For more information on what has changed recently, see the [CHANGELOG](CHANGELOG.md).
