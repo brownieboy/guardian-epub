@@ -4,6 +4,13 @@
   "description": "Creates an ePub of the Guardian newspaper from the Guardian API",
   "type": "module",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brownieboy/guardian-epub"
+  },
+  "bugs": {
+    "url": "https://github.com/brownieboy/guardian-epub/issues"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "guardianEpub": "./src/get-guardian.js",
@@ -13,7 +20,9 @@
     "guardianEpub": "./src/get-guardian.js",
     "guardianEpubKey": "./src/get-guardian-api-key.js"
   },
-  "keywords": ["Guardian"],
+  "keywords": [
+    "Guardian"
+  ],
   "author": {
     "name": "Michael Brown",
     "email": "brownieboy@gmail.com"
