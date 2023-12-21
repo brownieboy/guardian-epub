@@ -1,4 +1,4 @@
-# Guardian ePub
+# guardian-epub
 
 Need to read the latest edition of the Guardian newspaper on your Kindle? This is the app for you.
 
@@ -14,7 +14,7 @@ To run this app, you will need:
 
 ## Installing the Package
 
-Guardian ePub is command line interface (CLI) application. It must be run from a terminal, such as:
+guardian-epub is command line interface (CLI) application. It must be run from a terminal, such as:
 
 - Windows: Git Bash or Powershell
 - Macintosh: Terminal or iTerm
@@ -97,3 +97,11 @@ Add or change your Guardian API Platform key where it says "put_your_key_here".
 ## Changelog
 
 For more information on what has changed recently, see the [CHANGELOG](CHANGELOG.md).
+
+## Disclaimer
+
+This NPM package, guardian-epub, is an independent project and is not affiliated with, officially maintained, authorized, endorsed, or sponsored by Guardian News and Media Limited or any of its affiliates or subsidiaries. This package is provided "as is", without warranty of any kind, express or implied.
+
+The use of The Guardian's trademarks, brand names, or logos in this package is for identification and reference purposes only and does not imply any association with the trademark holder.
+
+Any trademarks and brand names mentioned in this document or in the guardian-epub package are the property of their respective owners.
