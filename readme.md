@@ -23,7 +23,7 @@ guardian-epub is command line interface (CLI) application. It must be run from a
 To install the app, the command is:
 
 ```bash
-npm install -g guardia-bpub
+npm install -g guardian-epub
 ```
 
 ## Running the Package
