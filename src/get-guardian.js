@@ -169,15 +169,13 @@ async function fetchArticles(sections) {
 
 async function createEpub(articlesBySection) {
   const filename = `guardian-${dateString}-${timeString}.epub`;
-
-  // let urlToFileMap = createUrlToFileMap(articlesBySection);
   const urlToFileMap = createUrlToFileMap(articlesBySection);
 
   // Creating custom title for the ToC
   const tocTitle = `The Guardian - ${dateString} ${timeStringDisplay}`;
   const content = [
     {
-      title: tocTitle, // This is for the custom ToC title
+      title: tocTitle,
       data: `<h1>${tocTitle}</h1>`,
       excludeFromToc: true,
     },
@@ -185,22 +183,21 @@ async function createEpub(articlesBySection) {
 
   // Process each section and its articles
   articlesBySection.forEach(sectionGroup => {
-    // Add section header as non-link in ToC
-    content.push({
+    // Create a section header with an articles array
+    let sectionHeader = {
       title: sectionGroup.section.toUpperCase(),
       data: `<h2 style="font-weight:bold;">${sectionGroup.section.toUpperCase()}</h2>`,
       excludeFromToc: true,
-    });
+      articles: [],
+    };
 
-    // Add articles within the section
+    // Add articles to the section
     sectionGroup.articles.forEach(article => {
       const updatedContent = updateArticleLinks(
         article.fields.body,
         urlToFileMap,
       );
-
-      // Generate a filename for the chapter
-      const filename = urlToFileMap[article.webUrl]; // Use the filename from the mapping
+      const articleFilename = urlToFileMap[article.webUrl];
 
       let publishDate;
       try {
@@ -212,27 +209,35 @@ async function createEpub(articlesBySection) {
         publishDate = formatISO(new Date());
       }
 
-      content.push({
+      const articleItem = {
         title: article.webTitle,
         data: updatedContent,
         author: article.fields.byline,
         publishedDate: publishDate,
         excludeFromToc: false,
-        filename: filename, // Specify the filename for the chapter
-      });
+        filename: articleFilename,
+      };
+
+      // Add article to section's articles array
+      sectionHeader.articles.push(articleItem);
+
+      // Also add article to the main content array for epub-gen processing
+      content.push(articleItem);
     });
+
+    // Add the section header to the main content array
+    content.push(sectionHeader);
   });
 
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const tocTemplatePath = join(__dirname, "guardian-toc-html.ejs");
-
 
   // EPUB options including the custom ToC template path
   const options = {
     title: `The Guardian ${dateString}:${timeStringDisplay}`,
     author: "The Guardian",
     content: content,
-    customHtmlTocTemplatePath: tocTemplatePath, // Path to your custom EJS template
+    customHtmlTocTemplatePath: tocTemplatePath,
   };
 
   // Creating the EPUB

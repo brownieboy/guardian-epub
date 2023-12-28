@@ -1,34 +1,43 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+
 <head>
-    <title><%= title %></title>
-    <meta charset="UTF-8"/>
-    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <title>
+        <%= title %>
+    </title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
+
 <body epub:type="frontmatter">
     <nav epub:type="toc">
         <ol>
             <% content.forEach(function(item) { %>
-                <% if(item.excludeFromToc) { %>
+                <% if(item.excludeFromToc && item.articles) { %>
                     <!-- Section header with nested articles -->
                     <li>
-                        <a href="<%= item.filename %>"><%= item.title %></a>
-                        <% if(item.articles && item.articles.length > 0) { %>
-                            <ol>
-                                <% item.articles.forEach(function(article) { %>
-                                    <% if(!article.excludeFromToc) { %>
-                                        <li><a href="<%= article.filename %>"><%= article.title %></a></li>
+                        <a href="#">
+                            <%= item.title %>
+                        </a>
+                        <ol>
+                            <% item.articles.forEach(function(article) { %>
+                                <% if(!article.excludeFromToc) { %>
+                                    <li><a href="<%= article.filename %>">
+                                            <%= article.title %>
+                                        </a></li>
                                     <% } %>
-                                <% }); %>
-                            </ol>
-                        <% } %>
+                                        <% }); %>
+                        </ol>
                     </li>
-                <% } else { %>
-                    <!-- Standalone article -->
-                    <li><a href="<%= item.filename %>"><%= item.title %></a></li>
-                <% } %>
-            <% }); %>
+                    <% } else if(!item.excludeFromToc) { %>
+                        <!-- Standalone article -->
+                        <li><a href="<%= item.filename %>">
+                                <%= item.title %>
+                            </a></li>
+                        <% } %>
+                            <% }); %>
         </ol>
     </nav>
 </body>
+
 </html>
