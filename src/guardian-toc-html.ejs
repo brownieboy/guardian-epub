@@ -13,7 +13,7 @@
     <nav epub:type="toc">
         <ol>
             <% content.forEach(function(item) { %>
-                <% if(item.excludeFromToc && item.articles) { %>
+                <% if(item.articles) { %>
                     <!-- Section header with nested articles -->
                     <li>
                         <a href="#">
@@ -21,21 +21,14 @@
                         </a>
                         <ol>
                             <% item.articles.forEach(function(article) { %>
-                                <% if(!article.excludeFromToc) { %>
-                                    <li><a href="<%= article.filename %>">
-                                            <%= article.title %>
-                                        </a></li>
-                                    <% } %>
-                                        <% }); %>
+                                <li><a href="<%= article.filename %>">
+                                        <%= article.title %>
+                                    </a></li>
+                                <% }); %>
                         </ol>
                     </li>
-                    <% } else if(!item.excludeFromToc) { %>
-                        <!-- Standalone article -->
-                        <li><a href="<%= item.filename %>">
-                                <%= item.title %>
-                            </a></li>
-                        <% } %>
-                            <% }); %>
+                    <% } %>
+                        <% }); %>
         </ol>
     </nav>
 </body>
