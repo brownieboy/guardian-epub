@@ -226,6 +226,7 @@ async function createEpub(articlesBySection) {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const tocTemplatePath = join(__dirname, "guardian-toc-html.ejs");
 
+
   // EPUB options including the custom ToC template path
   const options = {
     title: `The Guardian ${dateString}:${timeStringDisplay}`,
