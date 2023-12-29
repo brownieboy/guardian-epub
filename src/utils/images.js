@@ -1,8 +1,8 @@
 import Jimp from "jimp";
 
 export async function createTextImage(outputPath, titleText, timeText) {
-  const width = 800; // Width of the cover
-  const height = 600; // Height of the cover
+  const width = 1200; // Width of the cover
+  const height = 1600; // Height of the cover
   const backgroundColor = 0xffffffff; // White background (in ARGB format)
   const padding = 20; // Padding between title and time text
 
