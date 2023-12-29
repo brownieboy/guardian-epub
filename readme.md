@@ -56,6 +56,16 @@ Again, hit the Return/Enter key when you're done.
 
 Your chosen order will stored in a different config file, and that order will be used the basis for all future section selections.
 
+### Skipping sections selection
+
+If you want to retrieve the same sections in the same order each time, then you can use the `--noselect` switch to skip out those user input selections.   The syntax for that is:
+
+```bash
+guardianEpub -- --noselect
+```
+
+Hint: don't forget that first set of double dashes.   Also, don't use the `--noselect` the *first* time you ever run the command, otherwise you'll end up with one empty ePub!
+
 ### Demo
 
 The animated GIF below shows the process of creating the ePub, and then opening it and reading it in the Calibre eReader.
