@@ -61,10 +61,10 @@ Your chosen order will stored in a different config file, and that order will be
 If you want to retrieve the same sections in the same order each time, then you can use the `--noselect` switch to skip out those user input selections.   The syntax for that is:
 
 ```bash
-guardianEpub -- --noselect
+guardianEpub --noselect
 ```
 
-Hint: don't forget that first set of double dashes.   Also, don't use the `--noselect` the *first* time you ever run the command, otherwise you'll end up with one empty ePub!
+Hint: don't use the `--noselect` the *first* time you ever run the command, otherwise you'll end up with one empty ePub!
 
 ### Demo
 
