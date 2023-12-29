@@ -2,10 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0] - 2023-12-21
+## [1.1.0] - 2023-12-29
 
-- First release
+- Expandable sections in Table of Contents
+- New cover image
+- `--noselect` switch to avoid user input every time
 
 ## [1.0.1] - 2023-12-21
 
 - Typo in install instructions
+
+## [1.0.0] - 2023-12-21
+
+- First release
+
+
