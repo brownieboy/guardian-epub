@@ -18,7 +18,7 @@
     <% let playOrder=1; %>
       <% content.forEach(function(item) { %>
         <% if(item.excludeFromToc) { %>
-          <navPoint id="navPoint-<%= playOrder %>" playOrder="<%= playOrder++ %>">
+          <navPoint id="navPoint-<%= playOrder %>" playOrder="<%= playOrder++ %>" class="chapter">
             <navLabel>
               <text>
                 <%= item.title %>
