@@ -4,6 +4,8 @@ import axios from "axios";
 import ora from "ora";
 import { JSDOM } from "jsdom";
 import Epub from "epub-gen";
+import yargs from "yargs/yargs";
+import { hideBin } from "yargs/helpers";
 import { formatISO, parseISO } from "date-fns";
 import os from "os";
 import { format, utcToZonedTime } from "date-fns-tz";
@@ -32,6 +34,7 @@ if (!existsSync(configDir)) {
   mkdirSync(configDir);
 }
 
+const argv = yargs(hideBin(process.argv)).argv;
 const API_KEY = getApiKey();
 
 if (!API_KEY) {
@@ -277,26 +280,38 @@ async function main() {
 
   const defaultSections = loadSections();
 
-  const selectedSections = await selectSections(sections, defaultSections);
+  // Check for --noselect switch
+  const noSelect = argv.noSelect || argv.noselect;
 
-  if (selectedSections.length === 0) {
-    console.log("No sections selected.");
-    return;
+  let userSortedSections;
+
+  if (!noSelect) {
+    // Prompt user to select and reorder sections
+    const selectedSections = await selectSections(sections, defaultSections);
+    if (selectedSections.length === 0) {
+      console.log("No sections selected.");
+      return;
+    }
+
+    const sectionsArray = Object.keys(selectedSections);
+    const sectionsArraySortedByDefault = sortArrayByDefaultArray(
+      sectionsArray,
+      defaultSections,
+    );
+
+    userSortedSections = await reorderSections(sectionsArraySortedByDefault);
+    saveSettings({ sections: userSortedSections });
+  } else {
+    // Use default sections without prompting
+    userSortedSections = defaultSections;
   }
-
-  const sectionsArray = Object.keys(selectedSections);
-  const sectionsArraySortedByDefault = sortArrayByDefaultArray(
-    sectionsArray,
-    defaultSections,
-  );
-
-  const userSortedSections = await reorderSections(
-    sectionsArraySortedByDefault,
-  );
-
-  saveSettings({ sections: userSortedSections });
-
-  spinner = ora("Fetching articles from Guardian API...").start();
+  spinner = ora(
+    `${
+      noSelect
+        ? "--noselect switch detected, so skipping sections select.  "
+        : ""
+    } Fetching articles from Guardian API...`,
+  ).start();
 
   const articlesBySection = await fetchArticles(userSortedSections);
   if (articlesBySection.length > 0) {
