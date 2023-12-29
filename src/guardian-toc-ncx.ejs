@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+
+  <head>
+    <!-- The UID here should match the unique-identifier in your OPF file's metadata -->
+    <meta name="dtb:uid" content="<%= bookId %>" />
+    <meta name="dtb:depth" content="1" />
+    <meta name="dtb:totalPageCount" content="0" />
+    <meta name="dtb:maxPageNumber" content="0" />
+  </head>
+  <docTitle>
+    <text>
+      <%= title %>
+    </text>
+  </docTitle>
+  <navMap>
+    <% let playOrder=1; %>
+      <% content.forEach(function(item) { %>
+        <% if(item.excludeFromToc) { %>
+          <navPoint id="navPoint-<%= playOrder %>" playOrder="<%= playOrder++ %>">
+            <navLabel>
+              <text>
+                <%= item.title %>
+              </text>
+            </navLabel>
+            <!-- Use the first article's filename if the section has articles and no filename -->
+            <content
+              src="<%= item.filename || (item.articles && item.articles[0] && item.articles[0].filename) || '#' %>" />
+          </navPoint>
+          <% } %>
+            <% if(item.articles) { %>
+              <% item.articles.forEach(function(article) { %>
+                <navPoint id="navPoint-<%= playOrder %>" playOrder="<%= playOrder++ %>">
+                  <navLabel>
+                    <text>
+                      <%= article.title %>
+                    </text>
+                  </navLabel>
+                  <content src="<%= article.filename %>" />
+                </navPoint>
+                <% }); %>
+                  <% } %>
+                    <% }); %>
+  </navMap>
+</ncx>

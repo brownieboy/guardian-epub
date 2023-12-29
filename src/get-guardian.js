@@ -173,13 +173,14 @@ async function createEpub(articlesBySection) {
 
   // Creating custom title for the ToC
   const tocTitle = `The Guardian - ${dateString} ${timeStringDisplay}`;
-  const content = [
-    {
-      title: tocTitle,
-      data: `<h1>${tocTitle}</h1>`,
-      excludeFromToc: true,
-    },
-  ];
+  // const content = [
+  //   {
+  //     title: tocTitle,
+  //     data: `<h1>${tocTitle}</h1>`,
+  //     excludeFromToc: true,
+  //   },
+  // ];
+  const content = [];
 
   // Process each section and its articles
   articlesBySection.forEach(sectionGroup => {
@@ -231,13 +232,19 @@ async function createEpub(articlesBySection) {
 
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const tocTemplatePath = join(__dirname, "guardian-toc-html.ejs");
+  const tocNcxTemplatePath = join(__dirname, "guardian-toc-ncx.ejs");
+
+  // console.log("TCL ~ file: get-guardian.js:215 ~ createEpub ~ content:", JSON.stringify(content, 0, 4).substring(0, 100000));
+
 
   // EPUB options including the custom ToC template path
   const options = {
     title: `The Guardian ${dateString}:${timeStringDisplay}`,
     author: "The Guardian",
     content: content,
+    bookId: tocTitle,
     customHtmlTocTemplatePath: tocTemplatePath,
+    customNcxTocTemplatePath: tocNcxTemplatePath,
   };
 
   // Creating the EPUB
