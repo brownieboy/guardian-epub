@@ -3,7 +3,6 @@
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
 
   <head>
-    <!-- The UID here should match the unique-identifier in your OPF file's metadata -->
     <meta name="dtb:uid" content="<%= bookId %>" />
     <meta name="dtb:depth" content="1" />
     <meta name="dtb:totalPageCount" content="0" />
@@ -16,6 +15,15 @@
   </docTitle>
   <navMap>
     <% let playOrder=1; %>
+
+      <!-- Direct link to the Table of Contents page -->
+      <navPoint id="navPoint-<%= playOrder %>" playOrder="<%= playOrder++ %>">
+        <navLabel>
+          <text>Table of Contents</text>
+        </navLabel>
+        <content src="toc.xhtml" />
+      </navPoint>
+
       <% content.forEach(function(item) { %>
         <% if(item.excludeFromToc) { %>
           <navPoint id="navPoint-<%= playOrder %>" playOrder="<%= playOrder++ %>" class="chapter">
@@ -24,7 +32,6 @@
                 <%= item.title %>
               </text>
             </navLabel>
-            <!-- Use the first article's filename if the section has articles and no filename -->
             <content
               src="<%= item.filename || (item.articles && item.articles[0] && item.articles[0].filename) || '#' %>" />
           </navPoint>
