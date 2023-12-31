@@ -42,6 +42,8 @@
                   <navLabel>
                     <text>
                       <%= article.title %>
+                        <% if(article.author && !article.title.includes(article.author)) { %> | <%= article.author %>
+                            <% } %>
                     </text>
                   </navLabel>
                   <content src="<%= article.filename %>" />

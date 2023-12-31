@@ -24,9 +24,14 @@
                         </a>
                         <ol>
                             <% item.articles.forEach(function(article) { %>
-                                <li><a href="<%= article.filename %>">
+                                <li>
+                                    <a href="<%= article.filename %>">
                                         <%= article.title %>
-                                    </a></li>
+                                            <% if(article.author && !article.title.includes(article.author)) { %>
+                                                | <%= article.author %>
+                                                    <% } %>
+                                    </a>
+                                </li>
                                 <% }); %>
                         </ol>
                     </li>
