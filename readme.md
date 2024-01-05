@@ -26,6 +26,8 @@ To install the app, the command is:
 npm install -g guardian-epub
 ```
 
+Note: you also use `npx` to avoid installing the package as a separate step. See **NPX Method** section below.
+
 ## Running the Package
 
 After installation, the command to begin the creation of the Guardian ePub file is:
@@ -35,6 +37,15 @@ guardianEpub
 ```
 
 just on its own.
+
+### NPX Method
+
+To use `npx` and avoid installing the package as a separate step, the syntax is like this:
+
+```bash
+npx -p guardian-epub@latest -y guardianEpub
+```
+
 
 ### Enter API Key
 
@@ -58,13 +69,19 @@ Your chosen order will stored in a different config file, and that order will be
 
 ### Skipping sections selection
 
-If you want to retrieve the same sections in the same order each time, then you can use the `--noselect` switch to skip out those user input selections.   The syntax for that is:
+If you want to retrieve the same sections in the same order each time, then you can use the `--noselect` switch to skip out those user input selections. The syntax for that is:
 
 ```bash
 guardianEpub --noselect
 ```
 
-Hint: don't use the `--noselect` the *first* time you ever run the command, otherwise you'll end up with one empty ePub!
+Or if you're using the `npx` syntax, then it's this:
+
+```bash
+npx -p guardian-epub@latest -y guardianEpub --noselect
+```
+
+Hint: don't use the `--noselect` the _first_ time you ever run the command, otherwise you'll end up with one empty ePub!
 
 ### Demo
 
