@@ -19,12 +19,13 @@
   <script>
     const { Terminal } = require('xterm');
     const { spawn } = require('node-pty');
+    const path = require('path');
 
     const terminal = new Terminal();
     terminal.open(document.getElementById('terminal-container'));
 
-    const shell = process.platform === 'win32' ? 'powershell.exe' : 'bash';
-    const ptyProcess = spawn(shell, [], {
+    // Replace 'shell' with the path to Node.js and your script as arguments
+    const ptyProcess = spawn(process.execPath, [path.join(__dirname, 'hello.js')], {
       name: 'xterm-color',
       cols: terminal.cols,
       rows: terminal.rows,
