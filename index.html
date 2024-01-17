@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Electron Terminal</title>
+  <link rel="stylesheet" href="node_modules/xterm/css/xterm.css" />
+  <style>
+    #terminal-container {
+      width: 100%;
+      height: 100%;
+      background-color: black;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="terminal-container"></div>
+  <script src="node_modules/xterm/lib/xterm.js"></script>
+  <script>
+    const { Terminal } = require('xterm');
+    const { spawn } = require('node-pty');
+
+    const terminal = new Terminal();
+    terminal.open(document.getElementById('terminal-container'));
+
+    const shell = process.platform === 'win32' ? 'powershell.exe' : 'bash';
+    const ptyProcess = spawn(shell, [], {
+      name: 'xterm-color',
+      cols: terminal.cols,
+      rows: terminal.rows,
+      cwd: process.cwd(),
+      env: process.env
+    });
+
+    ptyProcess.onData(data => terminal.write(data));
+    terminal.onData(data => ptyProcess.write(data));
+  </script>
+</body>
+
+</html>
