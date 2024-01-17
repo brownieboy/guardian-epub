@@ -12,6 +12,10 @@
     "url": "https://github.com/brownieboy/guardian-epub/issues"
   },
   "scripts": {
+    "build-linux": "pkg -t node20-linux-x64 -o hello-linux hello.js",
+    "build-windows": "pkg -t node20-win-x64 -o hello-win.exe hello.js",
+    "build-mac-intel": "pkg -t node20-macos-x64 -o hello-mac-intel hello.js",
+    "build-mac-arm": "pkg -t node20-macos-arm64 -o ./binaries/hello-mac-arm ./src/get-guardian.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "guardianEpub": "./src/get-guardian.js",
     "guardianEpubKey": "./src/get-guardian-api-key.js"
@@ -41,6 +45,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@yao-pkg/pkg": "^5.11.1",
     "eslint": "^8.54.0",
     "prettier": "^3.1.0"
   }

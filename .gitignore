@@ -5,3 +5,5 @@ guardian-open-platform-key.json
 *.tgz
 /.vscode
 src/guardian-cover.jpg
+
+/binaries
