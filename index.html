@@ -17,24 +17,7 @@
   <div id="terminal-container"></div>
   <script src="node_modules/xterm/lib/xterm.js"></script>
   <script>
-    const { Terminal } = require('xterm');
-    const { spawn } = require('node-pty');
-    const path = require('path');
-
-    const terminal = new Terminal();
-    terminal.open(document.getElementById('terminal-container'));
-
-    // Replace 'shell' with the path to Node.js and your script as arguments
-    const ptyProcess = spawn(process.execPath, [path.join(__dirname, 'hello.js')], {
-      name: 'xterm-color',
-      cols: terminal.cols,
-      rows: terminal.rows,
-      cwd: process.cwd(),
-      env: process.env
-    });
-
-    ptyProcess.onData(data => terminal.write(data));
-    terminal.onData(data => ptyProcess.write(data));
+    require('./renderer.js')
   </script>
 </body>
 
