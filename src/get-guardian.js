@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import axios from "axios";
-import ora from "ora";
+// import ora from "ora";
 import { JSDOM } from "jsdom";
 import Epub from "epub-gen";
 import yargs from "yargs/yargs";
@@ -17,8 +17,9 @@ import { getApiKey, loadSections, saveSettings } from "./utils/files.js";
 import { sortArrayByDefaultArray } from "./utils/sort.js";
 import { createTextImage } from "./utils/images.js";
 
-const require = createRequire(import.meta.url);
-const { MultiSelect, Sort } = require("enquirer");
+const dynamicRequire = createRequire(import.meta.url);
+const { MultiSelect, Sort } = dynamicRequire("enquirer");
+const ora = await (await import("ora")).default;
 
 // Get the current date and time
 const now = new Date();

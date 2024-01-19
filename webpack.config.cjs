@@ -1,21 +1,24 @@
 const path = require("path");
+const nodeExternals = require("webpack-node-externals");
 
 module.exports = {
   target: "node",
   entry: "./src/get-guardian.js", // Your main file
+  externals: [nodeExternals()], // Exclude Node modules
+
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "bundle.js",
+    filename: "bundle.cjs",
+    libraryTarget: "commonjs",
   },
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules\/(?!(ora|chalk|other-package)\/).*/,
+        exclude: /node_modules\/(?!(ora|chalk)\/).*/,
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env"],
             plugins: ["babel-plugin-transform-import-meta"],
           },
         },
