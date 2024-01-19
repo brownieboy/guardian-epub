@@ -1,10 +1,8 @@
 const path = require("path");
-const nodeExternals = require("webpack-node-externals");
 
 module.exports = {
   target: "node",
   entry: "./src/get-guardian.js", // Your main file
-  externals: [nodeExternals()], // Exclude Node modules
 
   output: {
     path: path.resolve(__dirname, "dist"),

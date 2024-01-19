@@ -16,7 +16,11 @@
     "buildDev": "webpack --mode development",
     "test": "echo \"Error: no test specified\" && exit 1",
     "guardianEpub": "./src/get-guardian.js",
-    "guardianEpubKey": "./src/get-guardian-api-key.js"
+    "guardianEpubKey": "./src/get-guardian-api-key.js",
+    "createBlob": "node --experimental-sea-config sea-config.json",
+    "createNodeCopyWin": "sh -c 'cp $(command -v node) get-guardian.exe'",
+    "injectBlobWin": "npx postject get-guardian.exe NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2",
+    "createWinExe": "npm run createBlob && npm run createNodeCopyWin && npm run injectBlobWin"
   },
   "bin": {
     "guardianEpub": "./src/get-guardian.js",
@@ -51,7 +55,6 @@
     "eslint": "^8.54.0",
     "prettier": "^3.1.0",
     "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-node-externals": "^3.0.0"
+    "webpack-cli": "^5.1.4"
   }
 }
