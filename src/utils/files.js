@@ -1,7 +1,10 @@
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
-import enquirer from "enquirer";
 import { join } from "path";
 import { homedir } from "os";
+import { createRequire } from "module";
+
+const dynamicRequire = createRequire(import.meta.url);
+const enquirer = dynamicRequire("enquirer");
 
 export const getConfigDir = () => {
   const userHomeDir = homedir();

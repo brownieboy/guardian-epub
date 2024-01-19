@@ -41,7 +41,7 @@
     "axios": "^1.6.2",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
-    "enquirer": "github:brownieboy/enquirer#bugfix/270-multiselect-with-defaults",
+    "enquirer": "^2.4.1",
     "epub-gen": "^0.1.0",
     "jimp": "^0.22.10",
     "jsdom": "^23.0.1",

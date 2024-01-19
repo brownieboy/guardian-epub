@@ -13,7 +13,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules\/(?!(ora|chalk)\/).*/,
+        // exclude: /node_modules\/(?!(ora|chalk)\/).*/,
         use: {
           loader: "babel-loader",
           options: {
