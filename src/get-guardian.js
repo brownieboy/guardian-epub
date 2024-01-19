@@ -35,7 +35,7 @@ if (!existsSync(configDir)) {
 }
 
 const argv = yargs(hideBin(process.argv)).argv;
-const API_KEY = getApiKey();
+const API_KEY = await getApiKey();
 
 if (!API_KEY) {
   console.log(

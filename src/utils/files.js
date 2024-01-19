@@ -1,4 +1,5 @@
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
+import enquirer from "enquirer";
 import { join } from "path";
 import { homedir } from "os";
 
@@ -11,17 +12,38 @@ export const getConfigDir = () => {
   return configDir;
 };
 
-export const getApiFile = () => {
+export const getApiFilePath = () => {
   return join(getConfigDir(), "guardian-open-platform-key.json");
 };
 
 export const setApiKey = apiKey => {
-  writeFileSync(getApiFile(), JSON.stringify({ API_KEY: apiKey }));
+  writeFileSync(getApiFilePath(), JSON.stringify({ API_KEY: apiKey }));
 };
 
-export const getApiKey = () => {
+async function saveGuardianApiKey(apiFilePath) {
+  // Prompt the user for the API key
+  const answers = await enquirer.prompt([
+    {
+      type: "input",
+      name: "apiKey",
+      message: "Please enter or paste your Guardian API key:",
+    },
+  ]);
+
+  // Save the API key to the configuration file
+  setApiKey(answers.apiKey);
+  console.log(`API key saved successfully to file ${apiFilePath}`);
+}
+
+export const getApiKey = async () => {
+  const apiFilePath = getApiFilePath();
+  if (!existsSync(apiFilePath)) {
+    console.warn("The API key file does not exist:", apiFilePath);
+    await saveGuardianApiKey(apiFilePath);
+  }
+
   try {
-    const jsonData = readFileSync(getApiFile());
+    const jsonData = readFileSync(getApiFilePath());
     return JSON.parse(jsonData).API_KEY;
   } catch (error) {
     console.error("Error reading API key from file:", error);
