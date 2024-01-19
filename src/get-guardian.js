@@ -17,10 +17,9 @@ import Enquirer from "enquirer";
 
 import { getApiKey, loadSections, saveSettings } from "./utils/files.js";
 import { sortArrayByDefaultArray } from "./utils/sort.js";
-import { createTextImage } from "./utils/images.js";
+// import { createTextImage } from "./utils/images.js";
 
-const { MultiSelect, Sort } = Enquirer;
-
+const { MultiSelect, Sort } = Enquirer;  // Can't import these directly in one step for some reason
 
 // const dynamicRequire = createRequire(import.meta.url);
 // const { MultiSelect, Sort } = dynamicRequire("enquirer");
@@ -31,7 +30,7 @@ const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const zonedTime = utcToZonedTime(now, timeZone);
 const dateString = format(zonedTime, "yyyy-MM-dd");
 const timeString = format(zonedTime, "HHmm");
-const dayOfWeek = format(zonedTime, "EEEE");
+// const dayOfWeek = format(zonedTime, "EEEE");
 const timeStringDisplay = format(zonedTime, "HH:mm");
 const userHomeDir = os.homedir();
 const configDir = path.join(userHomeDir, ".guardianEpub");
@@ -243,14 +242,14 @@ async function createEpub(articlesBySection) {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const tocTemplatePath = join(__dirname, "guardian-toc-html.ejs");
   const tocNcxTemplatePath = join(__dirname, "guardian-toc-ncx.ejs");
-  const coverPath = join(__dirname, "guardian-cover.jpg");
+  // const coverPath = join(__dirname, "guardian-cover.jpg");
 
   const title = `The Guardian ${dateString}:${timeStringDisplay}`;
-  await createTextImage(
-    coverPath,
-    "The Guardian",
-    `${dayOfWeek} ${dateString}:${timeStringDisplay}`,
-  );
+  // await createTextImage(
+  //   coverPath,
+  //   "The Guardian",
+  //   `${dayOfWeek} ${dateString}:${timeStringDisplay}`,
+  // );
   // console.log("TCL ~ file: get-guardian.js:215 ~ createEpub ~ content:", JSON.stringify(content, 0, 4).substring(0, 100000));
 
   // EPUB options including the custom ToC template path
@@ -259,7 +258,7 @@ async function createEpub(articlesBySection) {
     author: "The Guardian",
     content: content,
     bookId: tocTitle,
-    cover: coverPath,
+    // cover: coverPath,
     customHtmlTocTemplatePath: tocTemplatePath,
     customNcxTocTemplatePath: tocNcxTemplatePath,
   };
