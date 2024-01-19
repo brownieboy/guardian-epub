@@ -26,7 +26,7 @@ async function saveGuardianApiKey(apiFilePath) {
     {
       type: "input",
       name: "apiKey",
-      message: "Please enter or paste your Guardian API key:",
+      message: "Please enter or paste your Guardian API here:",
     },
   ]);
 
@@ -39,6 +39,9 @@ export const getApiKey = async () => {
   const apiFilePath = getApiFilePath();
   if (!existsSync(apiFilePath)) {
     console.warn("The API key file does not exist:", apiFilePath);
+    console.log(
+      "To use this app you will need a free Guardian API key from  https://open-platform.theguardian.com/access/",
+    );
     await saveGuardianApiKey(apiFilePath);
   }
 
