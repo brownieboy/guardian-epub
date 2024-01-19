@@ -12,13 +12,18 @@ import { format, utcToZonedTime } from "date-fns-tz";
 import { mkdirSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import path, { dirname, join } from "path";
-import { createRequire } from "module";
+import Enquirer from "enquirer";
+// import { createRequire } from "module";
+
 import { getApiKey, loadSections, saveSettings } from "./utils/files.js";
 import { sortArrayByDefaultArray } from "./utils/sort.js";
 import { createTextImage } from "./utils/images.js";
 
-const dynamicRequire = createRequire(import.meta.url);
-const { MultiSelect, Sort } = dynamicRequire("enquirer");
+const { MultiSelect, Sort } = Enquirer;
+
+
+// const dynamicRequire = createRequire(import.meta.url);
+// const { MultiSelect, Sort } = dynamicRequire("enquirer");
 
 // Get the current date and time
 const now = new Date();

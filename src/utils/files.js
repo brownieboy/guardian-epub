@@ -1,10 +1,13 @@
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
-import { createRequire } from "module";
+import Enquirer from "enquirer";
+// import { createRequire } from "module";
 
-const dynamicRequire = createRequire(import.meta.url);
-const enquirer = dynamicRequire("enquirer");
+// const dynamicRequire = createRequire(import.meta.url);
+// const enquirer = dynamicRequire("enquirer");
+
+const { prompt } = Enquirer;
 
 export const getConfigDir = () => {
   const userHomeDir = homedir();
@@ -25,7 +28,7 @@ export const setApiKey = apiKey => {
 
 async function saveGuardianApiKey(apiFilePath) {
   // Prompt the user for the API key
-  const answers = await enquirer.prompt([
+  const answers = await prompt([
     {
       type: "input",
       name: "apiKey",
