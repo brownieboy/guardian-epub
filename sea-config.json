@@ -1,1 +1,1 @@
-{ "main": "./dist/bundle.js", "output": "sea-prep.blob" }
+{ "main": "./dist/bundle.cjs", "output": "sea-prep.blob" }
