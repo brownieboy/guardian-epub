@@ -3,7 +3,9 @@ const fs = require("fs");
 const archive = archiver("zip");
 const output = fs.createWriteStream("guardian-epub.zip");
 
-archive.file("get-guardian.exe", { name: "bin/get-guardian.exe" });
+const fileName = process.argv[2]; // This will get 'get-guardian.exe' from the command line
+
+archive.file(fileName, { name: `bin/${fileName}` });
 archive.file("src/guardian-toc-html.ejs", {
   name: "bin/guardian-toc-html.ejs",
 });
