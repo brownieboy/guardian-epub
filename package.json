@@ -1,6 +1,6 @@
 {
   "name": "guardian-epub",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Creates an ePub of the Guardian newspaper from the Guardian API",
   "type": "module",
   "main": "index.js",

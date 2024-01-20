@@ -8,11 +8,13 @@ A Node application that will create an ePub book from the current edition of the
 
 To run this app, you will need:
 
-1. [NodeJS](https://nodejs.org/) installed on your PC. Node is available for Windows, Macintosh and Linux. You should install version 18 or higher.  Or you can now use the standalone installers for Windows, Mac and Linux.
+1. [NodeJS](https://nodejs.org/) installed on your PC. Node is available for Windows, Macintosh and Linux. You should install version 18 or higher. Alternatively, as of version 1.2.0, you can use the standalone installers for Windows, Mac (ARM only) and Linux.
 2. A Guardian API key. You will need to register for this at https://open-platform.theguardian.com/access/. They are free for non-commercial use.
 3. A Kindle or some other kind of ePub reader.
 
 ## Installing the Package
+
+### With Node Installed
 
 guardian-epub is command line interface (CLI) application. It must be run from a terminal, such as:
 
@@ -20,15 +22,23 @@ guardian-epub is command line interface (CLI) application. It must be run from a
 - Macintosh: Terminal or iTerm
 - Linux: various, check your distro's documentation
 
-To install the app, the command is:
+To install the app if you have Node installed, the command is:
 
 ```bash
 npm install -g guardian-epub
 ```
 
-Note: you also use `npx` to avoid installing the package as a separate step. See **NPX Method** section below.
+Note: you can also use `npx` to avoid installing the package as a separate step. See **NPX Method** section below
+
+### Without Node Installed
+
+Download the binary zip file for your machine time from the Releases section on the right. Binaries are available for Windows, Mac (ARM only) and Linux.
+
+Unzip the zip file to a folder somewhere your machine. The executable that you need to run will be in the /bin sub-folder of the folder to which you extracted the zip file.
 
 ## Running the Package
+
+### Node Version
 
 After installation, the command to begin the creation of the Guardian ePub file is:
 
@@ -38,12 +48,34 @@ guardianEpub
 
 just on its own.
 
-### NPX Method
+#### NPX Method
 
 To use `npx` and avoid installing the package as a separate step, the syntax is like this:
 
 ```bash
 npx -p guardian-epub@latest -y guardianEpub
+```
+
+### Standalone Binaries (without Node) Version
+
+In the folder to which you extracted the zip file, `cd` to the /bin sub-folder. The command to run the app will be:
+
+For Windows (Powershell):
+
+```bash
+.\get-guardian.exe
+```
+
+For ARM Mac (iTerm):
+
+```bash
+./get-guardian-mac
+```
+
+For Linux:
+
+```bash
+./get-guardian-linux
 ```
 
 ### Enter API Key
@@ -62,7 +94,7 @@ Hit the Return/Enter key when you're done.
 
 By default, your sections will appear in the your ePub alphabetically, which is probably not what you want. So the script will ask you to put them in order, using the on-screen keys again.
 
-Again, hit the Return/Enter key when you're done.  (See below for issue with the default Macintosh Terminal app.)
+Again, hit the Return/Enter key when you're done. (See below for issue with the default Macintosh Terminal app.)
 
 Your chosen order will stored in a different config file, and that order will be used the basis for all future section selections.
 
@@ -94,7 +126,7 @@ I've also skipped the part where you have to enter API key, as you'll likely onl
 
 ## Troubleshooting
 
-### Changing your API Key
+### Changing your API Key (Node version only)
 
 If you need to re-enter your Guardian key, you can run the command:
 
@@ -118,7 +150,15 @@ As per its extension, the file is a JSON file, and should look like this:
 }
 ```
 
-Add or change your Guardian API Platform key where it says "put_your_key_here".
+Add or change your Guardian API Platform key dswhere it says "put_your_key_here".
+
+If you're using the (non Node) binaries, then you will have to edit this file manually. This command should do it on most platforms:
+
+```bash
+nano ~/.guardianEpub/guardian-open-platform-key.json
+```
+
+Use ctrl->x keystroke to exit Nano and save your changes.
 
 ## Known Issues / Limitations
 
