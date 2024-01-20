@@ -8,7 +8,7 @@ A Node application that will create an ePub book from the current edition of the
 
 To run this app, you will need:
 
-1. [NodeJS](https://nodejs.org/) installed on your PC. Node is available for Windows, Macintosh and Linux. You should install version 18 or higher.
+1. [NodeJS](https://nodejs.org/) installed on your PC. Node is available for Windows, Macintosh and Linux. You should install version 18 or higher.  Or you can now use the standalone installers for Windows, Mac and Linux.
 2. A Guardian API key. You will need to register for this at https://open-platform.theguardian.com/access/. They are free for non-commercial use.
 3. A Kindle or some other kind of ePub reader.
 
@@ -46,7 +46,6 @@ To use `npx` and avoid installing the package as a separate step, the syntax is 
 npx -p guardian-epub@latest -y guardianEpub
 ```
 
-
 ### Enter API Key
 
 The first time that you run the package, it will prompt you to type/paste in your Guardian API key.
@@ -63,7 +62,7 @@ Hit the Return/Enter key when you're done.
 
 By default, your sections will appear in the your ePub alphabetically, which is probably not what you want. So the script will ask you to put them in order, using the on-screen keys again.
 
-Again, hit the Return/Enter key when you're done.
+Again, hit the Return/Enter key when you're done.  (See below for issue with the default Macintosh Terminal app.)
 
 Your chosen order will stored in a different config file, and that order will be used the basis for all future section selections.
 
@@ -120,6 +119,12 @@ As per its extension, the file is a JSON file, and should look like this:
 ```
 
 Add or change your Guardian API Platform key where it says "put_your_key_here".
+
+## Known Issues / Limitations
+
+### Sorting on Macintosh
+
+Sort doesn’t work with Mac’s default terminal app, which is actually called Terminal. This is [known issue](https://github.com/enquirer/enquirer/issues/206) with how Terminal handles the Shift key . There’s [a workaround](https://superuser.com/questions/841391/os-x-terminal-eating-the-shift-key) but I haven’t tested it, so use at your own risk. My recommendation is to install and use [iTerm](https://iterm2.com/index.html), which works correctly.
 
 ## Changelog
 
