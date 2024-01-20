@@ -20,13 +20,16 @@
     "createBlob": "node --experimental-sea-config sea-config.json",
     "createNodeCopyWin": "sh -c 'cp $(command -v node) get-guardian.exe'",
     "createNodeCopyLin": "sh -c 'cp $(command -v node) get-guardian-linux'",
+    "createNodeCopyMac": "sh -c 'cp $(command -v node) get-guardian-mac'",
     "injectBlobWin": "npx postject get-guardian.exe NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2",
     "injectBlobLin": "npx postject get-guardian-linux NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2",
+    "injectBlobMac": "npx postject get-guardian-mac NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA",
     "createWinExe": "npm run createBlob && npm run createNodeCopyWin && npm run injectBlobWin",
     "createLinuxBin": "npm run createBlob && npm run createNodeCopyLin && npm run injectBlobLin",
+    "createMacBin": "npm run createBlob && npm run createNodeCopyMac && npm run injectBlobMac",
     "archiveWin": "node ./scripts/archive.cjs get-guardian.exe",
-    "archiveLin": "node ./scripts/archive.cjs get-guardian-linux"
-
+    "archiveLin": "node ./scripts/archive.cjs get-guardian-linux",
+    "archiveMac": "node ./scripts/archive.cjs get-guardian-mac"
   },
   "bin": {
     "guardianEpub": "./src/get-guardian.js",
