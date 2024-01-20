@@ -9,7 +9,6 @@ get-guardian.exe
 sea-prep.blob
 /dist
 
-
 get-guardian-linux
 *.exe
 *.zip

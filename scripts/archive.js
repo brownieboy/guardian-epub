@@ -23,8 +23,9 @@ archive.file("src/guardian-toc-html.ejs", {
   name: "bin/guardian-toc-html.ejs",
 });
 archive.file("src/guardian-toc-ncx.ejs", { name: "bin/guardian-toc-ncx.ejs" });
-// Include the templates folder
+// Include the static assets for the executables we have to call at run time
 archive.directory("node_modules/epub-gen/templates", "templates");
+archive.directory("node_modules/jimp/fonts", "fonts");
 
 archive.finalize();
 
