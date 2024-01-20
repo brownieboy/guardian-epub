@@ -45,7 +45,7 @@
     "axios": "^1.6.2",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
-    "enquirer": "^2.4.1",
+    "enquirer": "file:../enquirer-mike-fork/enquirer-2.4.1.tgz",
     "epub-gen": "^0.1.0",
     "jimp": "^0.22.10",
     "jsdom": "^23.0.1",
