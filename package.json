@@ -27,9 +27,7 @@
     "createWinExe": "npm run createBlob && npm run createNodeCopyWin && npm run injectBlobWin",
     "createLinuxBin": "npm run createBlob && npm run createNodeCopyLin && npm run injectBlobLin",
     "createMacBin": "npm run createBlob && npm run createNodeCopyMac && npm run injectBlobMac",
-    "archiveWin": "node ./scripts/archive.cjs get-guardian.exe",
-    "archiveLin": "node ./scripts/archive.cjs get-guardian-linux",
-    "archiveMac": "node ./scripts/archive.cjs get-guardian-mac"
+    "archive": "node ./scripts/archive-os.js"
   },
   "bin": {
     "guardianEpub": "./src/get-guardian.js",
