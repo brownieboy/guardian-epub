@@ -11,7 +11,6 @@ function archiveForWindows() {
 
 function archiveForMac() {
   const isArmMac = process.arch === "arm64";
-  console.log("TCL ~ archiveForMac ~ isArmMac:", isArmMac);
   if (isArmMac) {
     runCommand("npm run createMacBin");
     runArchiveCommand("get-guardian-mac");

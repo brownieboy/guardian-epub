@@ -32,9 +32,17 @@ Note: you can also use `npx` to avoid installing the package as a separate step.
 
 ### Without Node Installed
 
-Download the binary zip file for your machine time from the Releases section on the right. Binaries are available for Windows, Mac (ARM only) and Linux.
+Download the binary zip file for your machine time from the Releases section on the right. Binaries are available for Windows, Mac (ARM and Intel) and Linux.
 
 Unzip the zip file to a folder somewhere your machine. The executable that you need to run will be in the /bin sub-folder of the folder to which you extracted the zip file.
+
+For Mac and Linux, if you get a "permission denied" error when you try to run the executable then you will need to set execution permissions like so:
+
+```bash
+chmod +x ./get-guardian-mac
+```
+
+The executable should now run.
 
 ## Running the Package
 
