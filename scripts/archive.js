@@ -7,7 +7,11 @@ let zipFileName;
 if (fileName.includes(".exe")) {
   zipFileName = "guardian-epub-win.zip";
 } else if (fileName.includes("mac")) {
-  zipFileName = "guardian-epub-mac.zip";
+  if (fileName.includes("intel")) {
+    zipFileName = "guardian-epub-mac-intel.zip";
+  } else {
+    zipFileName = "guardian-epub-mac.zip";
+  }
 } else if (fileName.includes("linux")) {
   zipFileName = "guardian-epub-linux.zip";
 } else {

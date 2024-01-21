@@ -21,12 +21,15 @@
     "createNodeCopyWin": "sh -c 'cp $(command -v node) get-guardian.exe'",
     "createNodeCopyLin": "sh -c 'cp $(command -v node) get-guardian-linux'",
     "createNodeCopyMac": "sh -c 'cp $(command -v node) get-guardian-mac'",
+    "createNodeCopyMacIntel": "sh -c 'cp $(command -v node) get-guardian-mac-intel'",
     "injectBlobWin": "npx postject get-guardian.exe NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2",
     "injectBlobLin": "npx postject get-guardian-linux NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2",
     "injectBlobMac": "npx postject get-guardian-mac NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA && codesign --sign - ./get-guardian-mac",
+    "injectBlobMacIntel": "npx postject get-guardian-mac-intel NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA && codesign --sign - ./get-guardian-mac-intel",
     "createWinExe": "npm run createBlob && npm run createNodeCopyWin && npm run injectBlobWin",
     "createLinuxBin": "npm run createBlob && npm run createNodeCopyLin && npm run injectBlobLin",
     "createMacBin": "npm run createBlob && npm run createNodeCopyMac && npm run injectBlobMac",
+    "createMacBinIntel": "npm run createBlob && npm run createNodeCopyMacIntel && npm run injectBlobMacIntel",
     "archive": "node ./scripts/archive-os.js"
   },
   "bin": {
