@@ -8,7 +8,7 @@ A Node application that will create an ePub book from the current edition of the
 
 To run this app, you will need:
 
-1. [NodeJS](https://nodejs.org/) installed on your PC. Node is available for Windows, Macintosh and Linux. You should install version 18 or higher. Alternatively, as of version 1.2.0, you can use the standalone installers for Windows, Mac (ARM only) and Linux.  You can find these on the Git page for this project.
+1. [NodeJS](https://nodejs.org/) installed on your PC. Node is available for Windows, Macintosh and Linux. You should install version 18 or higher. Alternatively, as of version 1.2.0, you can use the standalone installers for Windows, Mac (ARM only) and Linux. You can find these on the Git page for this project.
 2. A Guardian API key. You will need to register for this at https://open-platform.theguardian.com/access/. They are free for non-commercial use.
 3. A Kindle or some other kind of ePub reader.
 
@@ -35,7 +35,6 @@ Note: you can also use `npx` to avoid installing the package as a separate step.
 Download the binary zip file for your machine time from the Releases section on the right. Binaries are available for Windows, Mac (ARM and Intel) and Linux.
 
 Unzip the zip file to a folder somewhere your machine. The executable that you need to run will be in the /bin sub-folder of the folder to which you extracted the zip file.
-
 
 ## Running the Package
 
