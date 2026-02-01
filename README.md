@@ -9,7 +9,7 @@ A Node application that will create an ePub book from the current edition of the
 To run this app, you will need:
 
 1. [NodeJS](https://nodejs.org/) installed on your PC. Node is available for Windows, Macintosh and Linux. You should install version 18 or higher. Alternatively, as of version 1.2.0, you can use the standalone installers for Windows, Mac (ARM only) and Linux. You can find these on the Git page for this project.
-2. A Guardian API key. You will need to register for this at https://open-platform.theguardian.com/access/. They are free for non-commercial use.
+2. A Guardian API key. You will need to register for this at [Guardian Open Platform access](https://open-platform.theguardian.com/access/). They are free for non-commercial use.
 3. A Kindle or some other kind of ePub reader.
 
 ## Installing the Package
@@ -110,7 +110,7 @@ Your chosen order will stored in a different config file, and that order will be
 
 ### Reselecting sections (optional)
 
-By default, the app uses your saved sections without prompting. If you want to reselect sections, pass the `--selections` switch. The syntax is:
+By default, the app uses your saved sections without prompting you again. If you want to reselect and/or reorder your sections, pass the `--selections` switch. The syntax is:
 
 ```bash
 guardianEpub --selections
@@ -175,6 +175,12 @@ Use ctrl->x keystroke to exit Nano and save your changes.
 ### Sorting on Macintosh
 
 Sort doesn’t work with Mac’s default terminal app, which is actually called Terminal. This is [known issue](https://github.com/enquirer/enquirer/issues/206) with how Terminal handles the Shift key . There’s [a workaround](https://superuser.com/questions/841391/os-x-terminal-eating-the-shift-key) but I haven’t tested it, so use at your own risk. My recommendation is to install and use [iTerm](https://iterm2.com/index.html), which works correctly.
+
+## Developing The App
+
+For development setup, architecture notes, and build details, see the developer guide:
+
+[DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)
 
 ## Changelog
 

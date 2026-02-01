@@ -56,7 +56,8 @@ describe("guardianEpub CLI", () => {
   });
 
   const hasRealKey = existsSync(realKeyPath);
-  const maybeIt = hasRealKey ? it : it.skip;
+  const allowLiveTests = process.env.RUN_LIVE_API_TESTS === "1";
+  const maybeIt = hasRealKey && allowLiveTests ? it : it.skip;
 
   maybeIt(
     "runs end-to-end when an API key is available",

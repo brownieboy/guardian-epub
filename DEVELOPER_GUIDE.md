@@ -140,7 +140,7 @@ Notable runtime dependencies:
 
 This project currently depends on a local packaged fork of Enquirer:
 
-```
+```json
 "enquirer": "file:../enquirer-mike-fork/enquirer-2.4.1.tgz"
 ```
 
@@ -161,4 +161,20 @@ If you are setting up the repo on a new machine, you need that `.tgz` to exist a
 
 ## Testing
 
-There are currently no automated tests (`npm test` is a placeholder).
+Run the test suite:
+
+```bash
+pnpm test
+```
+
+Watch mode:
+
+```bash
+pnpm test:watch
+```
+
+Live API test (disabled by default to avoid hitting the Guardian API in CI):
+
+```bash
+RUN_LIVE_API_TESTS=1 pnpm test
+```
