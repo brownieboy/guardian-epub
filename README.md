@@ -108,21 +108,21 @@ Again, hit the Return/Enter key when you're done. (See below for issue with the 
 
 Your chosen order will stored in a different config file, and that order will be used the basis for all future section selections.
 
-### Skipping sections selection
+### Reselecting sections (optional)
 
-If you want to retrieve the same sections in the same order each time, then you can use the `--noselect` switch to skip out those user input selections. The syntax for that is:
-
-```bash
-guardianEpub --noselect
-```
-
-Or if you're using the `npx` syntax, then it's this:
+By default, the app uses your saved sections without prompting. If you want to reselect sections, pass the `--selections` switch. The syntax is:
 
 ```bash
-npx -p guardian-epub@latest -y guardianEpub --noselect
+guardianEpub --selections
 ```
 
-Hint: don't use the `--noselect` the _first_ time you ever run the command, otherwise you'll end up with one empty ePub!
+Or if you're using the `npx` syntax:
+
+```bash
+npx -p guardian-epub@latest -y guardianEpub --selections
+```
+
+First run note: if no sections are saved yet, the app will prompt you even if you don't pass `--selections`.
 
 ### Demo
 

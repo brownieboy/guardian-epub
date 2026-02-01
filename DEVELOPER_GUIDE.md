@@ -43,11 +43,11 @@ High-level flow in `src/get-guardian.js`:
 1. Determine local date/time and initialize `~/.guardianEpub`.
 2. Load the API key via `getApiKey()` (prompts if missing).
 3. Fetch available sections from the Guardian API (`/sections`).
-4. If `--noselect` is *not* used:
+4. If `--selections` is used (or no saved sections exist):
    - Prompt for section selection (multi-select).
    - Reorder selected sections (drag/sort UI).
    - Persist selection order to `settings.json`.
-5. If `--noselect` *is* used:
+5. If `--selections` is not used and saved sections exist:
    - Load saved sections from `settings.json`.
 6. Fetch all articles for each section (`/SECTION_ID` with `show-fields=all`).
 7. Build an ePub:
@@ -76,13 +76,13 @@ guardianEpub
 npm run guardianEpubKey
 ```
 
-### Skip section selection
+### Reselect sections
 
 ```bash
-guardianEpub --noselect
+guardianEpub --selections
 ```
 
-This uses the saved section order from `~/.guardianEpub/settings.json`.
+This forces the selection prompts even if you already have saved sections.
 
 ## Build and packaging
 
@@ -156,7 +156,7 @@ If you are setting up the repo on a new machine, you need that `.tgz` to exist a
 ## Troubleshooting
 
 - If the app exits early with “API key file not found,” run `npm run guardianEpubKey`.
-- If `--noselect` produces an empty ePub, delete `~/.guardianEpub/settings.json` and re-run without `--noselect` to reselect sections.
+- If you accidentally saved empty sections, delete `~/.guardianEpub/settings.json` and re-run with `--selections` to reselect.
 - If prompts misbehave on macOS Terminal, use iTerm (see README Known Issues).
 
 ## Testing

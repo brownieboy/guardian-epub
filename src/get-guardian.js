@@ -17,7 +17,7 @@ import Enquirer from "enquirer";
 
 import { getApiKey, loadSections, saveSettings } from "./utils/files.js";
 import { sortArrayByDefaultArray } from "./utils/sort.js";
-import { createTextImage } from "./utils/images.js";
+import { createCoverImage } from "./utils/images.js";
 
 const { MultiSelect, Sort } = Enquirer;  // Can't import these directly in one step for some reason
 
@@ -97,6 +97,72 @@ function updateArticleLinks(articleContent, urlToFileMap) {
   });
 
   return dom.serialize();
+}
+
+function parseImageCandidatesFromHtml(html) {
+  if (!html) {
+    return [];
+  }
+
+  const dom = new JSDOM(html);
+  const document = dom.window.document;
+  const images = Array.from(document.querySelectorAll("img"));
+
+  return images
+    .map(img => {
+      const src = img.getAttribute("src");
+      if (!src) {
+        return null;
+      }
+      const width =
+        Number(img.getAttribute("width")) ||
+        Number(img.getAttribute("data-width")) ||
+        0;
+      const height =
+        Number(img.getAttribute("height")) ||
+        Number(img.getAttribute("data-height")) ||
+        0;
+      const figure = img.closest("figure");
+      const figcaption =
+        figure?.querySelector("figcaption")?.textContent?.trim() || "";
+      return {
+        url: src,
+        area: width > 0 && height > 0 ? width * height : 0,
+        source: "main",
+        caption: figcaption,
+      };
+    })
+    .filter(Boolean);
+}
+
+function selectCoverImageFromNews(articlesBySection) {
+  const newsSection = articlesBySection.find(
+    sectionGroup => sectionGroup.section === "news",
+  );
+  if (!newsSection || newsSection.articles.length === 0) {
+    return null;
+  }
+
+  for (const article of newsSection.articles) {
+    const fields = article.fields || {};
+    const mainCandidates = parseImageCandidatesFromHtml(fields.main);
+    if (mainCandidates.length > 0) {
+      const [first] = mainCandidates;
+      return {
+        url: first.url,
+        caption: first.caption || "",
+      };
+    }
+
+    if (fields.thumbnail) {
+      return {
+        url: fields.thumbnail,
+        caption: "",
+      };
+    }
+  }
+
+  return null;
 }
 
 async function fetchSections() {
@@ -245,10 +311,13 @@ async function createEpub(articlesBySection) {
   const coverPath = join(__dirname, "guardian-cover.jpg");
 
   const title = `The Guardian ${dateString}:${timeStringDisplay}`;
-  await createTextImage(
+  const coverImage = selectCoverImageFromNews(articlesBySection);
+  await createCoverImage(
     coverPath,
     "The Guardian",
     `${dayOfWeek} ${dateString}:${timeStringDisplay}`,
+    coverImage?.url || null,
+    coverImage?.caption || "",
   );
 
   // EPUB options including the custom ToC template path
@@ -283,12 +352,13 @@ async function main() {
 
   const defaultSections = loadSections();
 
-  // Check for --noselect switch
-  const noSelect = argv.noSelect || argv.noselect;
+  // Check for --selections switch
+  const useSelections = argv.selections;
 
   let userSortedSections;
+  const hasSavedSections = defaultSections.length > 0;
 
-  if (!noSelect) {
+  if (useSelections || !hasSavedSections) {
     // Prompt user to select and reorder sections
     const selectedSections = await selectSections(sections, defaultSections);
     if (selectedSections.length === 0) {
@@ -310,9 +380,9 @@ async function main() {
   }
   spinner = ora(
     `${
-      noSelect
-        ? "--noselect switch detected, so skipping sections select.  "
-        : ""
+      useSelections || !hasSavedSections
+        ? ""
+        : "Using saved sections (set --selections to reselect).  "
     } Fetching articles from Guardian API...`,
   ).start();
 
