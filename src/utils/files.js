@@ -41,13 +41,19 @@ async function saveGuardianApiKey(apiFilePath) {
   console.log(`API key saved successfully to file ${apiFilePath}`);
 }
 
-export const getApiKey = async () => {
+export const getApiKey = async ({ allowPrompt = true } = {}) => {
   const apiFilePath = getApiFilePath();
+  const noPrompt =
+    process.env.GUARDIAN_EPUB_NO_PROMPT === "1" ||
+    process.env.CI === "true";
   if (!existsSync(apiFilePath)) {
     console.warn("The API key file does not exist:", apiFilePath);
     console.log(
       "To use this app you will need a free Guardian API key from  https://open-platform.theguardian.com/access/",
     );
+    if (!allowPrompt || noPrompt) {
+      return null;
+    }
     await saveGuardianApiKey(apiFilePath);
   }
 
