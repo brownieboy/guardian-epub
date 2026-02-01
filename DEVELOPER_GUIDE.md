@@ -1,0 +1,164 @@
+# guardian-epub Developer Guide
+
+This guide explains how the project is structured, how the CLI works, and how to build the standalone binaries.
+
+## Project overview
+
+`guardian-epub` is a Node.js CLI that:
+
+1. Fetches available Guardian sections and prompts the user to select/reorder them.
+2. Downloads the latest content for each chosen section from the Guardian Open Platform.
+3. Generates a Kindle-friendly ePub with a custom cover and TOC.
+4. Stores user settings (API key + section choices) under `~/.guardianEpub` for future runs.
+
+The main entrypoint is `src/get-guardian.js`.
+
+## Repository layout
+
+- `src/get-guardian.js`: main CLI flow (fetch sections, prompt, download, generate ePub).
+- `src/get-guardian-api-key.js`: CLI to enter/update the Guardian API key.
+- `src/utils/files.js`: config directory + settings + API key storage.
+- `src/utils/images.js`: creates a simple cover image with date/time text using Jimp.
+- `src/utils/sort.js`: helper to order sections using a default preference.
+- `src/guardian-toc-html.ejs`: HTML TOC template for epub-gen.
+- `src/guardian-toc-ncx.ejs`: NCX TOC template for epub-gen.
+- `scripts/archive.js`: builds a platform zip containing the standalone binary and assets.
+- `scripts/archive-os.js`: OS-aware wrapper for building the correct binary and archive.
+- `webpack.config.cjs`: builds `dist/bundle.cjs` for Node SEA embedding.
+- `sea-config.json`: Node SEA configuration to produce `sea-prep.blob`.
+
+## Runtime configuration
+
+The app writes config files to `~/.guardianEpub`:
+
+- `guardian-open-platform-key.json`: stores `{ "API_KEY": "..." }`.
+- `settings.json`: stores `{ "sections": [...] }` (and optional `sectionsOrder`).
+
+The first run will prompt for the API key if the key file does not exist.
+
+## How the CLI works (main flow)
+
+High-level flow in `src/get-guardian.js`:
+
+1. Determine local date/time and initialize `~/.guardianEpub`.
+2. Load the API key via `getApiKey()` (prompts if missing).
+3. Fetch available sections from the Guardian API (`/sections`).
+4. If `--noselect` is *not* used:
+   - Prompt for section selection (multi-select).
+   - Reorder selected sections (drag/sort UI).
+   - Persist selection order to `settings.json`.
+5. If `--noselect` *is* used:
+   - Load saved sections from `settings.json`.
+6. Fetch all articles for each section (`/SECTION_ID` with `show-fields=all`).
+7. Build an ePub:
+   - Generate a cover with the current date/time.
+   - Update article links to point to local xhtml files when possible.
+   - Build content items for epub-gen, plus a section header item per section.
+   - Render a custom TOC using the EJS templates.
+
+## CLI commands
+
+### Run the main CLI
+
+```bash
+npm run guardianEpub
+```
+
+Or, if installed globally via npm:
+
+```bash
+guardianEpub
+```
+
+### Update the API key
+
+```bash
+npm run guardianEpubKey
+```
+
+### Skip section selection
+
+```bash
+guardianEpub --noselect
+```
+
+This uses the saved section order from `~/.guardianEpub/settings.json`.
+
+## Build and packaging
+
+### Bundled build (for SEA)
+
+This compiles `src/get-guardian.js` to a CommonJS bundle at `dist/bundle.cjs`:
+
+```bash
+npm run build
+```
+
+### Standalone binaries (Node SEA)
+
+The standalone flow uses Node's Single Executable Applications (SEA) support:
+
+1. Build the bundle (`dist/bundle.cjs`).
+2. Generate `sea-prep.blob` via `sea-config.json`.
+3. Copy the local Node binary and inject the blob.
+4. Zip the binary and required runtime assets (epub-gen templates + Jimp fonts).
+
+Per-platform scripts:
+
+```bash
+npm run createWinExe
+npm run createLinuxBin
+npm run createMacBin
+npm run createMacBinIntel
+```
+
+Convenience wrapper (auto-detects platform):
+
+```bash
+npm run archive
+```
+
+### What gets included in the zip
+
+`/scripts/archive.js` adds:
+
+- The platform binary (`bin/get-guardian-*`).
+- `guardian-toc-html.ejs` and `guardian-toc-ncx.ejs` in `/bin`.
+- `node_modules/epub-gen/templates` (used at runtime).
+- `node_modules/jimp/fonts` (used at runtime for the cover).
+
+## Dependencies and local overrides
+
+Notable runtime dependencies:
+
+- `axios`: Guardian API requests.
+- `enquirer`: CLI prompts (MultiSelect + Sort).
+- `epub-gen`: EPUB creation and TOC handling.
+- `jimp`: cover image creation.
+- `jsdom`: link rewriting for local EPUB navigation.
+- `yargs`: CLI flags.
+
+This project currently depends on a local packaged fork of Enquirer:
+
+```
+"enquirer": "file:../enquirer-mike-fork/enquirer-2.4.1.tgz"
+```
+
+If you are setting up the repo on a new machine, you need that `.tgz` to exist at the referenced relative path or update the dependency.
+
+## Development tips
+
+- The CLI is ESM (`"type": "module"`), so use `import` syntax.
+- For quick iteration, run `npm run guardianEpub` directly without bundling.
+- The file names inside the ePub are generated from article titles and a running index, so changes to title sanitization affect internal links.
+- The link rewriter only updates links that match `theguardian.com` and exist in the URL-to-file map.
+
+## Troubleshooting
+
+- If the app exits early with “API key file not found,” run `npm run guardianEpubKey`.
+- If `--noselect` produces an empty ePub, delete `~/.guardianEpub/settings.json` and re-run without `--noselect` to reselect sections.
+- If prompts misbehave on macOS Terminal, use iTerm (see README Known Issues).
+
+## Testing
+
+There are currently no automated tests (`npm test` is a placeholder).
