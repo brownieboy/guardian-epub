@@ -11,11 +11,12 @@ This guide explains how the project is structured, how the CLI works, and how to
 3. Generates a Kindle-friendly ePub with a custom cover and TOC.
 4. Stores user settings (API key + section choices) under `~/.guardianEpub` for future runs.
 
-The main entrypoint is `src/get-guardian.js`.
+The main entrypoint is `src/get-guardian.js`, which now delegates EPUB generation to a reusable core module.
 
 ## Repository layout
 
-- `src/get-guardian.js`: main CLI flow (fetch sections, prompt, download, generate ePub).
+- `src/get-guardian.js`: main CLI flow (fetch sections, prompt, call core).
+- `src/core/guardian-core.js`: reusable core logic for fetching content and generating the EPUB (for CLI + future GUI).
 - `src/get-guardian-api-key.js`: CLI to enter/update the Guardian API key.
 - `src/utils/files.js`: config directory + settings + API key storage.
 - `src/utils/images.js`: creates a simple cover image with date/time text using Jimp.
@@ -49,8 +50,12 @@ High-level flow in `src/get-guardian.js`:
    - Persist selection order to `settings.json`.
 5. If `--selections` is not used and saved sections exist:
    - Load saved sections from `settings.json`.
-6. Fetch all articles for each section (`/SECTION_ID` with `show-fields=all`).
-7. Build an ePub:
+6. Call the core to fetch articles and build the EPUB.
+
+High-level flow in `src/core/guardian-core.js`:
+
+1. Fetch all articles for each section (`/SECTION_ID` with `show-fields=all`).
+2. Build an ePub:
    - Generate a cover with the current date/time.
    - Update article links to point to local xhtml files when possible.
    - Build content items for epub-gen, plus a section header item per section.
