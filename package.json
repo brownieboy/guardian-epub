@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "description": "Creates an ePub of the Guardian newspaper from the Guardian API",
   "type": "module",
-  "main": "index.js",
+  "main": "dist-electron/main.cjs",
   "repository": {
     "type": "git",
     "url": "https://github.com/brownieboy/guardian-epub"
@@ -12,8 +12,19 @@
     "url": "https://github.com/brownieboy/guardian-epub/issues"
   },
   "scripts": {
-    "build": "webpack --mode production",
-    "buildDev": "webpack --mode development",
+    "build:sea": "webpack --mode production",
+    "build:sea:dev": "webpack --mode development",
+    "dev": "concurrently -k \"pnpm dev:renderer\" \"pnpm dev:electron:main\" \"pnpm dev:electron:preload\" \"pnpm dev:electron:run\"",
+    "dev:renderer": "vite --config renderer/vite.config.ts",
+    "dev:electron:main": "esbuild electron/main.ts --bundle --platform=node --format=cjs --external:electron --external:jsdom --outfile=dist-electron/main.cjs --watch",
+    "dev:electron:preload": "esbuild electron/preload.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist-electron/preload.cjs --watch",
+    "dev:electron:run": "wait-on http://localhost:5173 dist-electron/main.cjs && cross-env ELECTRON_START_URL=http://localhost:5173 electron .",
+    "build:renderer": "vite build --config renderer/vite.config.ts",
+    "build:electron": "pnpm build:electron:main && pnpm build:electron:preload",
+    "build:electron:main": "esbuild electron/main.ts --bundle --platform=node --format=cjs --external:electron --external:jsdom --outfile=dist-electron/main.cjs",
+    "build:electron:preload": "esbuild electron/preload.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist-electron/preload.cjs",
+    "build:app": "pnpm build:renderer && pnpm build:electron",
+    "package:app": "pnpm build:app && electron-builder",
     "test": "vitest run --reporter verbose",
     "test:watch": "vitest --reporter verbose",
     "guardianEpub": "node ./src/get-guardian.js",
@@ -36,6 +47,33 @@
   "bin": {
     "guardianEpub": "./src/get-guardian.js",
     "guardianEpubKey": "./src/get-guardian-api-key.js"
+  },
+  "build": {
+    "appId": "com.brownieboy.guardianepub",
+    "productName": "Guardian ePub",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist-electron/**",
+      "renderer/dist/**",
+      "package.json"
+    ],
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
   },
   "keywords": [
     "Guardian"
@@ -61,14 +99,28 @@
     "@babel/cli": "^7.23.4",
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.8",
+    "@types/node": "^20.11.30",
+    "@types/react": "^18.2.61",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
     "archiver": "^6.0.1",
     "babel-loader": "^9.1.3",
     "babel-plugin-transform-import-meta": "^2.2.1",
+    "concurrently": "^9.0.1",
+    "cross-env": "^7.0.3",
+    "electron": "^29.1.5",
+    "electron-builder": "^24.13.3",
     "eslint": "^8.54.0",
+    "esbuild": "^0.20.2",
     "glob": "^10.3.10",
     "prettier": "^3.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.6",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
+    "wait-on": "^7.2.0",
     "vitest": "^2.1.5"
   }
 }

@@ -8,6 +8,10 @@ src/guardian-cover.jpg
 get-guardian.exe
 sea-prep.blob
 /dist
+/dist-electron
+/renderer/dist
+/renderer/.vite
+release
 
 get-guardian-linux
 *.exe

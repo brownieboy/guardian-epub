@@ -5,8 +5,7 @@ import { formatISO, parseISO } from "date-fns";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { existsSync, mkdirSync } from "fs";
 import { unlink } from "fs/promises";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import path from "path";
 
 import { createCoverImage } from "../utils/images.js";
 import { selectCoverImageFromNews } from "../utils/cover.js";
@@ -116,7 +115,7 @@ export async function fetchArticles(apiKey, sections, hooks = {}) {
 
 export async function createEpub(
   articlesBySection,
-  { outputDir, dateOverride } = {},
+  { outputDir, dateOverride, templatesDir } = {},
   hooks = {},
 ) {
   const { dateString, timeString, dayOfWeek, timeStringDisplay } =
@@ -168,17 +167,18 @@ export async function createEpub(
     content.push(sectionHeader);
   });
 
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  const tocTemplatePath = join(__dirname, "..", "guardian-toc-html.ejs");
-  const tocNcxTemplatePath = join(__dirname, "..", "guardian-toc-ncx.ejs");
+  const resolvedTemplatesDir =
+    templatesDir || path.resolve(process.cwd(), "src");
+  const tocTemplatePath = path.join(resolvedTemplatesDir, "guardian-toc-html.ejs");
+  const tocNcxTemplatePath = path.join(resolvedTemplatesDir, "guardian-toc-ncx.ejs");
 
   const targetDir = outputDir || process.cwd();
   if (!existsSync(targetDir)) {
     mkdirSync(targetDir, { recursive: true });
   }
 
-  const coverPath = join(targetDir, "guardian-cover.jpg");
-  const epubPath = join(targetDir, filename);
+  const coverPath = path.join(targetDir, "guardian-cover.jpg");
+  const epubPath = path.join(targetDir, filename);
 
   const title = `The Guardian ${dateString}:${timeStringDisplay}`;
   const coverImage = selectCoverImageFromNews(articlesBySection);
@@ -217,7 +217,7 @@ export async function createEpub(
 }
 
 export async function runGuardianEpub(options, hooks = {}) {
-  const { apiKey, sections, outputDir, dateOverride } = options || {};
+  const { apiKey, sections, outputDir, dateOverride, templatesDir } = options || {};
   if (!apiKey || !sections || sections.length === 0) {
     throw new Error("runGuardianEpub requires apiKey and sections.");
   }
@@ -240,7 +240,7 @@ export async function runGuardianEpub(options, hooks = {}) {
   hooks.onPhase?.("buildEpub");
   const epubResult = await createEpub(
     articlesBySection,
-    { outputDir, dateOverride },
+    { outputDir, dateOverride, templatesDir },
     hooks,
   );
 

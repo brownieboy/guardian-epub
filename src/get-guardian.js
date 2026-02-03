@@ -120,8 +120,13 @@ async function main() {
     } Fetching articles from Guardian API...`,
   ).start();
 
+  const templatesDir = path.dirname(fileURLToPath(import.meta.url));
   const result = await runGuardianEpub(
-    { apiKey: API_KEY, sections: userSortedSections },
+    {
+      apiKey: API_KEY,
+      sections: userSortedSections,
+      templatesDir,
+    },
     {
       onPhase: phase => {
         if (phase === "buildEpub") {

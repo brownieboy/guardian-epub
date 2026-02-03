@@ -1,0 +1,110 @@
+:root {
+  color: #0f172a;
+  background: radial-gradient(circle at top, #f8fafc 0%, #e2e8f0 45%, #cbd5f5 100%);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+  display: grid;
+  gap: 24px;
+}
+
+header {
+  background: rgba(255, 255, 255, 0.75);
+  padding: 24px 28px;
+  border-radius: 16px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+}
+
+header h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px 24px;
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+  display: grid;
+  gap: 16px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  font-weight: 600;
+}
+
+input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5f5;
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  background: #1d4ed8;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(29, 78, 216, 0.3);
+}
+
+.status {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.log {
+  max-height: 200px;
+  overflow: auto;
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 12px;
+  border-radius: 12px;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+}
+
+.section-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.section-grid span {
+  padding: 6px 10px;
+  background: #e0e7ff;
+  border-radius: 999px;
+  font-size: 12px;
+}
