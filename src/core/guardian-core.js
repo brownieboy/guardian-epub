@@ -4,6 +4,7 @@ import Epub from "epub-gen";
 import { formatISO, parseISO } from "date-fns";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { existsSync, mkdirSync } from "fs";
+import { unlink } from "fs/promises";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
@@ -206,6 +207,12 @@ export async function createEpub(
   } catch (error) {
     hooks.onError?.(error);
     return { epubPath: null };
+  } finally {
+    try {
+      await unlink(coverPath);
+    } catch (error) {
+      hooks.onError?.(error);
+    }
   }
 }
 
