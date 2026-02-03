@@ -48,8 +48,10 @@ app.on("window-all-closed", () => {
 ipcMain.handle("guardian:fetchSections", async (_event, apiKey: string) => {
   return fetchSections(apiKey, {
     onError: error => console.error(error),
+    throwOnError: true,
   });
 });
+
 
 ipcMain.handle(
   "guardian:run",

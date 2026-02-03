@@ -64,7 +64,8 @@ function updateArticleLinks(articleContent, urlToFileMap) {
   return dom.serialize();
 }
 
-export async function fetchSections(apiKey, hooks = {}) {
+export async function fetchSections(apiKey, options = {}) {
+  const { onError, throwOnError = false } = options;
   try {
     const response = await axios.get(
       "https://content.guardianapis.com/sections",
@@ -76,7 +77,10 @@ export async function fetchSections(apiKey, hooks = {}) {
     );
     return response.data.response.results.map(section => section.id);
   } catch (error) {
-    hooks.onError?.(error);
+    onError?.(error);
+    if (throwOnError) {
+      throw error;
+    }
     return [];
   }
 }
@@ -211,7 +215,9 @@ export async function createEpub(
     try {
       await unlink(coverPath);
     } catch (error) {
-      hooks.onError?.(error);
+      if (error?.code !== "ENOENT") {
+        hooks.onError?.(error);
+      }
     }
   }
 }

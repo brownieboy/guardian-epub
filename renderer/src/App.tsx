@@ -1,4 +1,16 @@
 import { useEffect, useState } from "react";
+import {
+  Box,
+  Chip,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  TextField,
+} from "@mui/material";
+import type { SelectChangeEvent } from "@mui/material/Select";
 import "./index.css";
 
 type ProgressUpdate = {
@@ -7,12 +19,12 @@ type ProgressUpdate = {
   message?: string;
 };
 
-const defaultSections = "world,uk,us-news";
-
 export default function App() {
   const [apiKey, setApiKey] = useState("");
-  const [sectionsInput, setSectionsInput] = useState(defaultSections);
   const [sections, setSections] = useState<string[]>([]);
+  const [selectedSections, setSelectedSections] = useState<string[]>([]);
+  const [hasFetchedSections, setHasFetchedSections] = useState(false);
+  const [apiKeyError, setApiKeyError] = useState("");
   const [phase, setPhase] = useState("");
   const [progress, setProgress] = useState<ProgressUpdate | null>(null);
   const [log, setLog] = useState<string[]>([]);
@@ -27,66 +39,132 @@ export default function App() {
     window.guardianApi.onError(message =>
       setLog(current => [...current, `Error: ${message}`]),
     );
+
   }, []);
 
-  const handleFetchSections = async () => {
+  useEffect(() => {
     if (!apiKey) {
-      setLog(current => [...current, "API key required."]);
+      setHasFetchedSections(false);
+      setSections([]);
+      setSelectedSections([]);
+      setApiKeyError("");
+    }
+  }, [apiKey]);
+
+  const validateApiKey = (value: string) => {
+    if (!value || value.trim().length < 10) {
+      return "API key looks too short. Please check it.";
+    }
+    return "";
+  };
+
+  const handleFetchSections = async () => {
+    const validationError = validateApiKey(apiKey);
+    if (validationError) {
+      setApiKeyError(validationError);
+      setLog(current => [...current, validationError]);
       return;
     }
-    const fetched = await window.guardianApi.fetchSections(apiKey);
-    setSections(fetched);
-    setLog(current => [...current, `Fetched ${fetched.length} sections.`]);
+
+    setApiKeyError("");
+    try {
+      const fetched = await window.guardianApi.fetchSections(apiKey);
+      setSections(fetched);
+      setLog(current => [...current, `Fetched ${fetched.length} sections.`]);
+      setHasFetchedSections(fetched.length > 0);
+      setSelectedSections([]);
+    } catch (error) {
+      const message =
+        "Failed to fetch sections. Check your API key and network connection.";
+      setApiKeyError(message);
+      setLog(current => [...current, message]);
+    }
   };
 
   const handleRun = async () => {
-    if (!apiKey) {
-      setLog(current => [...current, "API key required."]);
+    const validationError = validateApiKey(apiKey);
+    if (validationError) {
+      setApiKeyError(validationError);
+      setLog(current => [...current, validationError]);
       return;
     }
-    const sectionList = sectionsInput
-      .split(",")
-      .map(section => section.trim())
-      .filter(Boolean);
 
     const response = await window.guardianApi.run({
       apiKey,
-      sections: sectionList,
+      sections: selectedSections,
     });
     setResult(response);
+  };
+
+  const handleSectionsChange = (event: SelectChangeEvent<string[]>) => {
+    const value = event.target.value;
+    setSelectedSections(typeof value === "string" ? value.split(",") : value);
   };
 
   return (
     <div className="app">
       <header>
         <h1>Guardian ePub</h1>
-        <p>Electron + React + Vite + TypeScript scaffold</p>
+        <p>Enter your Guardian API key to get started.</p>
       </header>
 
       <section className="panel">
         <label>
           API Key
-          <input
+          <TextField
             value={apiKey}
             onChange={event => setApiKey(event.target.value)}
             placeholder="Guardian Open Platform API key"
+            error={Boolean(apiKeyError)}
+            helperText={apiKeyError || " "}
+            size="small"
           />
         </label>
 
-        <label>
-          Sections (comma-separated)
-          <input
-            value={sectionsInput}
-            onChange={event => setSectionsInput(event.target.value)}
-            placeholder="world,uk,us-news"
-          />
-        </label>
+        <FormControl
+          disabled={!apiKey || !hasFetchedSections}
+          size="small"
+          fullWidth
+        >
+          <InputLabel id="sections-select-label">Sections</InputLabel>
+          <Select
+            labelId="sections-select-label"
+            multiple
+            value={selectedSections}
+            onChange={handleSectionsChange}
+            input={<OutlinedInput label="Sections" />}
+            renderValue={selected => (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                {selected.map(value => (
+                  <Chip key={value} label={value} size="small" />
+                ))}
+              </Box>
+            )}
+          >
+            {sections.map(section => (
+              <MenuItem key={section} value={section}>
+                {section}
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>
+            {hasFetchedSections
+              ? "Select one or more sections."
+              : "Fetch sections to enable."}
+          </FormHelperText>
+        </FormControl>
 
         <div className="actions">
-          <button type="button" onClick={handleFetchSections}>
-            Fetch sections
-          </button>
-          <button type="button" onClick={handleRun}>
+          {!hasFetchedSections && (
+            <button
+              type="button"
+              onClick={handleFetchSections}
+              disabled={!apiKey}
+            >
+              Fetch sections
+            </button>
+          )}
+          <button type="button" onClick={handleRun} disabled={!apiKey || selectedSections.length === 0}>
             Generate ePub
           </button>
         </div>

@@ -56,6 +56,15 @@ input {
   font-size: 14px;
 }
 
+select {
+  min-height: 180px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5f5;
+  font-size: 14px;
+  background: #fff;
+}
+
 .actions {
   display: flex;
   gap: 12px;
@@ -76,6 +85,13 @@ button {
 button:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(29, 78, 216, 0.3);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  background: #94a3b8;
+  box-shadow: none;
+  transform: none;
 }
 
 .status {

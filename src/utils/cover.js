@@ -37,29 +37,41 @@ export function parseImageCandidatesFromHtml(html) {
 }
 
 export function selectCoverImageFromNews(articlesBySection) {
-  const newsSection = articlesBySection.find(
-    sectionGroup => sectionGroup.section === "news",
-  );
-  if (!newsSection || newsSection.articles.length === 0) {
+  if (!articlesBySection || articlesBySection.length === 0) {
     return null;
   }
 
-  for (const article of newsSection.articles) {
-    const fields = article.fields || {};
-    const mainCandidates = parseImageCandidatesFromHtml(fields.main);
-    if (mainCandidates.length > 0) {
-      const [first] = mainCandidates;
-      return {
-        url: first.url,
-        caption: first.caption || "",
-      };
+  const sectionsByPriority = [];
+  const newsSection = articlesBySection.find(
+    sectionGroup => sectionGroup.section === "news",
+  );
+  if (newsSection) {
+    sectionsByPriority.push(newsSection);
+  }
+  for (const sectionGroup of articlesBySection) {
+    if (sectionGroup !== newsSection) {
+      sectionsByPriority.push(sectionGroup);
     }
+  }
 
-    if (fields.thumbnail) {
-      return {
-        url: fields.thumbnail,
-        caption: "",
-      };
+  for (const sectionGroup of sectionsByPriority) {
+    for (const article of sectionGroup.articles || []) {
+      const fields = article.fields || {};
+      const mainCandidates = parseImageCandidatesFromHtml(fields.main);
+      if (mainCandidates.length > 0) {
+        const [first] = mainCandidates;
+        return {
+          url: first.url,
+          caption: first.caption || "",
+        };
+      }
+
+      if (fields.thumbnail) {
+        return {
+          url: fields.thumbnail,
+          caption: "",
+        };
+      }
     }
   }
 
