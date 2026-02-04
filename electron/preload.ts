@@ -7,6 +7,8 @@ type ProgressUpdate = {
 };
 
 contextBridge.exposeInMainWorld("guardianApi", {
+  loadSettings: () => ipcRenderer.invoke("settings:load"),
+  saveSettings: (data: any) => ipcRenderer.invoke("settings:save", data),
   fetchSections: (apiKey: string) => ipcRenderer.invoke("guardian:fetchSections", apiKey),
   run: (options: { apiKey: string; sections: string[] }) =>
     ipcRenderer.invoke("guardian:run", options),

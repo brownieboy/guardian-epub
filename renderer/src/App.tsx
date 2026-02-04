@@ -37,6 +37,7 @@ export default function App() {
   const [result, setResult] = useState<{ epubPath?: string } | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
     window.guardianApi.onPhase(setPhase);
     window.guardianApi.onProgress(setProgress);
     window.guardianApi.onLog(message =>
@@ -58,6 +59,30 @@ export default function App() {
       }
     });
 
+    window.guardianApi
+      .loadSettings()
+      .then(settings => {
+        if (!isMounted || !settings) {
+          return;
+        }
+        if (settings.apiKey) {
+          setApiKey(settings.apiKey);
+        }
+        if (Array.isArray(settings.lastFetchedSections)) {
+          setSections(settings.lastFetchedSections);
+        }
+        if (Array.isArray(settings.selectedSections)) {
+          setSelectedSections(settings.selectedSections);
+        }
+        if (settings.hasFetchedSections) {
+          setHasFetchedSections(true);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -69,6 +94,18 @@ export default function App() {
       setApiKeyError("");
     }
   }, [apiKey]);
+
+  useEffect(() => {
+    if (!apiKey) {
+      return;
+    }
+    window.guardianApi.saveSettings({
+      apiKey,
+      selectedSections,
+      hasFetchedSections,
+      lastFetchedSections: sections,
+    });
+  }, [apiKey, selectedSections, hasFetchedSections, sections]);
 
   const validateApiKey = (value: string) => {
     if (!value || value.trim().length < 10) {

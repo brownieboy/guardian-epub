@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, shell, Menu } from "electron";
 import path from "path";
 import { fetchSections, runGuardianEpub } from "../src/core/guardian-core.js";
+import { loadSettings, saveSettings } from "./settings.js";
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -77,6 +78,13 @@ ipcMain.handle("guardian:fetchSections", async (_event, apiKey: string) => {
     onError: error => console.error(error),
     throwOnError: true,
   });
+});
+
+ipcMain.handle("settings:load", async () => loadSettings());
+
+ipcMain.handle("settings:save", async (_event, data) => {
+  saveSettings(data);
+  return true;
 });
 
 

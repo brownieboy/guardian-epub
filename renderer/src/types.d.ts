@@ -7,6 +7,8 @@ type ProgressUpdate = {
 declare global {
   interface Window {
     guardianApi: {
+      loadSettings: () => Promise<any>;
+      saveSettings: (data: any) => Promise<boolean>;
       fetchSections: (apiKey: string) => Promise<string[]>;
       run: (options: { apiKey: string; sections: string[] }) => Promise<any>;
       openPath: (targetPath: string) => Promise<void>;
