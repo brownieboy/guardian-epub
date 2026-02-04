@@ -84,17 +84,22 @@ ipcMain.handle(
   "guardian:run",
   async (_event, options: { apiKey: string; sections: string[] }) => {
     const templatesDir = path.join(process.cwd(), "src");
-    return runGuardianEpub(
-      { ...options, templatesDir },
-      {
-      onPhase: phase => mainWindow?.webContents.send("guardian:phase", phase),
-      onProgress: progress =>
-        mainWindow?.webContents.send("guardian:progress", progress),
-      onLog: message => mainWindow?.webContents.send("guardian:log", message),
-      onError: error =>
-        mainWindow?.webContents.send("guardian:error", String(error)),
-      },
-    );
+    try {
+      return await runGuardianEpub(
+        { ...options, templatesDir },
+        {
+          onPhase: phase => mainWindow?.webContents.send("guardian:phase", phase),
+          onProgress: progress =>
+            mainWindow?.webContents.send("guardian:progress", progress),
+          onLog: message => mainWindow?.webContents.send("guardian:log", message),
+          onError: error =>
+            mainWindow?.webContents.send("guardian:error", String(error)),
+        },
+      );
+    } catch (error) {
+      mainWindow?.webContents.send("guardian:error", String(error));
+      throw error;
+    }
   },
 );
 

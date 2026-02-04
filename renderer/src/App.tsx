@@ -161,8 +161,7 @@ export default function App() {
         <h1>Guardian ePub</h1>
         {!hasFetchedSections && (
           <p>
-            Use Tools → API Key to enter your Guardian API key, then use Tools →
-            Refresh Sections.
+            Use Tools → API Key to enter your Guardian API key.
           </p>
         )}
       </header>
