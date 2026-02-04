@@ -65,6 +65,32 @@ select {
   background: #fff;
 }
 
+.sections-list {
+  max-height: 260px;
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid #cbd5f5;
+  background: #fff;
+}
+
+.sections-list-item {
+  cursor: pointer;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.sections-list .MuiGrid-item {
+  padding-top: 0 !important;
+}
+
+.sections-list .MuiListItemText-root span {
+  font-size: 13px;
+}
+
+.sections-list .MuiCheckbox-root {
+  padding: 4px;
+}
+
 .actions {
   display: flex;
   gap: 12px;
@@ -123,4 +149,42 @@ button:disabled {
   background: #e0e7ff;
   border-radius: 999px;
   font-size: 12px;
+}
+
+.selected-sections {
+  display: grid;
+  gap: 10px;
+}
+
+.selected-sections-header {
+  font-weight: 600;
+}
+
+.selected-sections-list {
+  display: grid;
+  gap: 8px;
+}
+
+.selected-section-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #f1f5f9;
+}
+
+.selected-section-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.selected-section-actions button {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #1e293b;
+}
+
+.selected-section-actions button:disabled {
+  background: #94a3b8;
 }

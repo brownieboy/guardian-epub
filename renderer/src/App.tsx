@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import {
-  Box,
-  Chip,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   FormHelperText,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Select,
   TextField,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material/Select";
 import "./index.css";
 
 type ProgressUpdate = {
@@ -25,6 +28,8 @@ export default function App() {
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
   const [hasFetchedSections, setHasFetchedSections] = useState(false);
   const [apiKeyError, setApiKeyError] = useState("");
+  const [showApiDialog, setShowApiDialog] = useState(false);
+  const [pendingApiKey, setPendingApiKey] = useState("");
   const [phase, setPhase] = useState("");
   const [progress, setProgress] = useState<ProgressUpdate | null>(null);
   const [log, setLog] = useState<string[]>([]);
@@ -39,6 +44,10 @@ export default function App() {
     window.guardianApi.onError(message =>
       setLog(current => [...current, `Error: ${message}`]),
     );
+    window.guardianApi.onOpenApiDialog(() => {
+      setPendingApiKey(apiKey);
+      setShowApiDialog(true);
+    });
 
   }, []);
 
@@ -56,6 +65,17 @@ export default function App() {
       return "API key looks too short. Please check it.";
     }
     return "";
+  };
+
+  const handleSaveApiKey = () => {
+    const validationError = validateApiKey(pendingApiKey);
+    if (validationError) {
+      setApiKeyError(validationError);
+      return;
+    }
+    setApiKeyError("");
+    setApiKey(pendingApiKey.trim());
+    setShowApiDialog(false);
   };
 
   const handleFetchSections = async () => {
@@ -96,63 +116,110 @@ export default function App() {
     setResult(response);
   };
 
-  const handleSectionsChange = (event: SelectChangeEvent<string[]>) => {
-    const value = event.target.value;
-    setSelectedSections(typeof value === "string" ? value.split(",") : value);
+  const toggleSection = (section: string) => {
+    setSelectedSections(current => {
+      if (current.includes(section)) {
+        return current.filter(item => item !== section);
+      }
+      return [...current, section];
+    });
+  };
+
+  const moveSection = (index: number, direction: "up" | "down") => {
+    setSelectedSections(current => {
+      const next = [...current];
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= next.length) {
+        return current;
+      }
+      [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
+      return next;
+    });
   };
 
   return (
     <div className="app">
       <header>
         <h1>Guardian ePub</h1>
-        <p>Enter your Guardian API key to get started.</p>
+        {!hasFetchedSections && (
+          <p>Enter your Guardian API key to get started.</p>
+        )}
       </header>
 
       <section className="panel">
-        <label>
-          API Key
-          <TextField
-            value={apiKey}
-            onChange={event => setApiKey(event.target.value)}
-            placeholder="Guardian Open Platform API key"
-            error={Boolean(apiKeyError)}
-            helperText={apiKeyError || " "}
-            size="small"
-          />
-        </label>
+        {!hasFetchedSections && (
+          <label>
+            API Key
+            <TextField
+              value={apiKey}
+              onChange={event => setApiKey(event.target.value)}
+              placeholder="Guardian Open Platform API key"
+              error={Boolean(apiKeyError)}
+              helperText={apiKeyError || " "}
+              size="small"
+            />
+          </label>
+        )}
 
         <FormControl
           disabled={!apiKey || !hasFetchedSections}
           size="small"
           fullWidth
         >
-          <InputLabel id="sections-select-label">Sections</InputLabel>
-          <Select
-            labelId="sections-select-label"
-            multiple
-            value={selectedSections}
-            onChange={handleSectionsChange}
-            input={<OutlinedInput label="Sections" />}
-            renderValue={selected => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {selected.map(value => (
-                  <Chip key={value} label={value} size="small" />
-                ))}
-              </Box>
-            )}
-          >
-            {sections.map(section => (
-              <MenuItem key={section} value={section}>
-                {section}
-              </MenuItem>
-            ))}
-          </Select>
+          <List className="sections-list" dense disablePadding>
+            <Grid container spacing={0}>
+              {sections.map(section => {
+                const checked = selectedSections.includes(section);
+                return (
+                  <Grid item key={section} xs={12} sm={6} md={4}>
+                    <ListItem
+                      onClick={() => toggleSection(section)}
+                      className="sections-list-item"
+                      disableGutters
+                    >
+                      <Checkbox checked={checked} />
+                      <ListItemText primary={section} />
+                    </ListItem>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </List>
           <FormHelperText>
             {hasFetchedSections
               ? "Select one or more sections."
               : "Fetch sections to enable."}
           </FormHelperText>
         </FormControl>
+
+        {selectedSections.length > 0 && (
+          <div className="selected-sections">
+            <div className="selected-sections-header">Selected order</div>
+            <div className="selected-sections-list">
+              {selectedSections.map((section, index) => (
+                <div key={section} className="selected-section-row">
+                  <span>{section}</span>
+                  <div className="selected-section-actions">
+                    <button
+                      type="button"
+                      onClick={() => moveSection(index, "up")}
+                      disabled={index === 0}
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveSection(index, "down")}
+                      disabled={index === selectedSections.length - 1}
+                    >
+                      ↓
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="actions">
           {!hasFetchedSections && (
@@ -199,16 +266,26 @@ export default function App() {
         </div>
       </section>
 
-      {sections.length > 0 && (
-        <section className="panel">
-          <h2>Available sections</h2>
-          <div className="section-grid">
-            {sections.map(section => (
-              <span key={section}>{section}</span>
-            ))}
-          </div>
-        </section>
-      )}
+      <Dialog open={showApiDialog} onClose={() => setShowApiDialog(false)}>
+        <DialogTitle>Set API Key</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="API Key"
+            type="text"
+            fullWidth
+            value={pendingApiKey}
+            onChange={event => setPendingApiKey(event.target.value)}
+            error={Boolean(apiKeyError)}
+            helperText={apiKeyError || " "}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowApiDialog(false)}>Cancel</Button>
+          <Button onClick={handleSaveApiKey}>Save</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

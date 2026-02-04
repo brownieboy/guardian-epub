@@ -14,6 +14,7 @@ declare global {
       onProgress: (handler: (progress: ProgressUpdate) => void) => void;
       onLog: (handler: (message: string) => void) => void;
       onError: (handler: (message: string) => void) => void;
+      onOpenApiDialog: (handler: () => void) => void;
     };
   }
 }

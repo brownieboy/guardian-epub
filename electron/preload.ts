@@ -23,4 +23,7 @@ contextBridge.exposeInMainWorld("guardianApi", {
   onError: (handler: (message: string) => void) => {
     ipcRenderer.on("guardian:error", (_event, message) => handler(message));
   },
+  onOpenApiDialog: (handler: () => void) => {
+    ipcRenderer.on("guardian:openApiDialog", () => handler());
+  },
 });

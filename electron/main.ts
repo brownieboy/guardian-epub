@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, ipcMain, shell, Menu } from "electron";
 import path from "path";
 import { fetchSections, runGuardianEpub } from "../src/core/guardian-core.js";
 
@@ -27,6 +27,27 @@ function createWindow() {
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
+
+  const menu = Menu.buildFromTemplate([
+    { role: "appMenu" },
+    { role: "fileMenu" },
+    { role: "editMenu" },
+    { role: "viewMenu" },
+    {
+      label: "Tools",
+      submenu: [
+        {
+          label: "API Key",
+          click: () => {
+            mainWindow?.webContents.send("guardian:openApiDialog");
+          },
+        },
+      ],
+    },
+    { role: "windowMenu" },
+    { role: "help" },
+  ]);
+  Menu.setApplicationMenu(menu);
 }
 
 app.whenReady().then(() => {
