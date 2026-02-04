@@ -6,6 +6,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   FormControl,
   FormHelperText,
   TextField,
@@ -14,6 +17,7 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "./index.css";
 
 type ProgressUpdate = {
@@ -28,6 +32,7 @@ export default function App() {
   const [sections, setSections] = useState<string[]>([]);
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
   const [hasFetchedSections, setHasFetchedSections] = useState(false);
+  const [sectionsExpanded, setSectionsExpanded] = useState(false);
   const [apiKeyError, setApiKeyError] = useState("");
   const [showApiDialog, setShowApiDialog] = useState(false);
   const [pendingApiKey, setPendingApiKey] = useState("");
@@ -92,6 +97,7 @@ export default function App() {
       setSections([]);
       setSelectedSections([]);
       setApiKeyError("");
+      setSectionsExpanded(false);
     }
   }, [apiKey]);
 
@@ -144,7 +150,11 @@ export default function App() {
       const fetched = await window.guardianApi.fetchSections(keyToUse);
       setSections(fetched);
       setLog(current => [...current, `Fetched ${fetched.length} sections.`]);
-      setHasFetchedSections(fetched.length > 0);
+      const fetchedOk = fetched.length > 0;
+      setHasFetchedSections(fetchedOk);
+      if (!hasFetchedSections && fetchedOk) {
+        setSectionsExpanded(true);
+      }
       setSelectedSections(current =>
         current.filter(section => fetched.includes(section)),
       );
@@ -204,36 +214,41 @@ export default function App() {
       </header>
 
       <section className="panel">
-        <FormControl
+        <Accordion
+          expanded={sectionsExpanded}
+          onChange={(_event, isExpanded) => setSectionsExpanded(isExpanded)}
           disabled={!apiKey || !hasFetchedSections}
-          size="small"
-          fullWidth
         >
-          <List className="sections-list" dense disablePadding>
-            <Grid container spacing={0}>
-              {sections.map(section => {
-                const checked = selectedSections.includes(section);
-                return (
-                  <Grid item key={section} xs={12} sm={6} md={4}>
-                    <ListItem
-                      onClick={() => toggleSection(section)}
-                      className="sections-list-item"
-                      disableGutters
-                    >
-                      <Checkbox checked={checked} />
-                      <ListItemText primary={section} />
-                    </ListItem>
-                  </Grid>
-                );
-              })}
-            </Grid>
-          </List>
-          <FormHelperText>
-            {hasFetchedSections
-              ? "Select one or more sections."
-              : "Fetch sections to enable."}
-          </FormHelperText>
-        </FormControl>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            Sections
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormControl size="small" fullWidth>
+              <List className="sections-list" dense disablePadding>
+                <Grid container spacing={0}>
+                  {sections.map(section => {
+                    const checked = selectedSections.includes(section);
+                    return (
+                      <Grid item key={section} xs={12} sm={6} md={4}>
+                        <ListItem
+                          onClick={() => toggleSection(section)}
+                          className="sections-list-item"
+                          disableGutters
+                        >
+                          <Checkbox checked={checked} />
+                          <ListItemText primary={section} />
+                        </ListItem>
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </List>
+              <FormHelperText>
+                Select one or more sections.
+              </FormHelperText>
+            </FormControl>
+          </AccordionDetails>
+        </Accordion>
 
         {selectedSections.length > 0 && (
           <div className="selected-sections">
