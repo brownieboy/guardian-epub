@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Button,
   Checkbox,
@@ -24,6 +24,7 @@ type ProgressUpdate = {
 
 export default function App() {
   const [apiKey, setApiKey] = useState("");
+  const apiKeyRef = useRef("");
   const [sections, setSections] = useState<string[]>([]);
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
   const [hasFetchedSections, setHasFetchedSections] = useState(false);
@@ -48,10 +49,19 @@ export default function App() {
       setPendingApiKey(apiKey);
       setShowApiDialog(true);
     });
+    window.guardianApi.onRefreshSections(() => {
+      const currentKey = apiKeyRef.current;
+      if (currentKey) {
+        handleFetchSections(currentKey);
+      } else {
+        setLog(current => [...current, "Enter API key to refresh sections."]);
+      }
+    });
 
   }, []);
 
   useEffect(() => {
+    apiKeyRef.current = apiKey;
     if (!apiKey) {
       setHasFetchedSections(false);
       setSections([]);
@@ -74,12 +84,17 @@ export default function App() {
       return;
     }
     setApiKeyError("");
-    setApiKey(pendingApiKey.trim());
+    const trimmedKey = pendingApiKey.trim();
+    setApiKey(trimmedKey);
     setShowApiDialog(false);
+    if (trimmedKey) {
+      handleFetchSections(trimmedKey);
+    }
   };
 
-  const handleFetchSections = async () => {
-    const validationError = validateApiKey(apiKey);
+  const handleFetchSections = async (keyOverride?: string) => {
+    const keyToUse = keyOverride ?? apiKey;
+    const validationError = validateApiKey(keyToUse);
     if (validationError) {
       setApiKeyError(validationError);
       setLog(current => [...current, validationError]);
@@ -88,11 +103,14 @@ export default function App() {
 
     setApiKeyError("");
     try {
-      const fetched = await window.guardianApi.fetchSections(apiKey);
+      setLog(current => [...current, "Fetching sections..."]);
+      const fetched = await window.guardianApi.fetchSections(keyToUse);
       setSections(fetched);
       setLog(current => [...current, `Fetched ${fetched.length} sections.`]);
       setHasFetchedSections(fetched.length > 0);
-      setSelectedSections([]);
+      setSelectedSections(current =>
+        current.filter(section => fetched.includes(section)),
+      );
     } catch (error) {
       const message =
         "Failed to fetch sections. Check your API key and network connection.";
@@ -142,25 +160,14 @@ export default function App() {
       <header>
         <h1>Guardian ePub</h1>
         {!hasFetchedSections && (
-          <p>Enter your Guardian API key to get started.</p>
+          <p>
+            Use Tools → API Key to enter your Guardian API key, then use Tools →
+            Refresh Sections.
+          </p>
         )}
       </header>
 
       <section className="panel">
-        {!hasFetchedSections && (
-          <label>
-            API Key
-            <TextField
-              value={apiKey}
-              onChange={event => setApiKey(event.target.value)}
-              placeholder="Guardian Open Platform API key"
-              error={Boolean(apiKeyError)}
-              helperText={apiKeyError || " "}
-              size="small"
-            />
-          </label>
-        )}
-
         <FormControl
           disabled={!apiKey || !hasFetchedSections}
           size="small"
@@ -222,16 +229,11 @@ export default function App() {
         )}
 
         <div className="actions">
-          {!hasFetchedSections && (
-            <button
-              type="button"
-              onClick={handleFetchSections}
-              disabled={!apiKey}
-            >
-              Fetch sections
-            </button>
-          )}
-          <button type="button" onClick={handleRun} disabled={!apiKey || selectedSections.length === 0}>
+          <button
+            type="button"
+            onClick={handleRun}
+            disabled={!apiKey || selectedSections.length === 0}
+          >
             Generate ePub
           </button>
         </div>
@@ -266,7 +268,12 @@ export default function App() {
         </div>
       </section>
 
-      <Dialog open={showApiDialog} onClose={() => setShowApiDialog(false)}>
+      <Dialog
+        open={showApiDialog}
+        onClose={() => setShowApiDialog(false)}
+        fullWidth
+        maxWidth="xs"
+      >
         <DialogTitle>Set API Key</DialogTitle>
         <DialogContent>
           <TextField
@@ -275,6 +282,7 @@ export default function App() {
             label="API Key"
             type="text"
             fullWidth
+            size="small"
             value={pendingApiKey}
             onChange={event => setPendingApiKey(event.target.value)}
             error={Boolean(apiKeyError)}

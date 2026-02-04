@@ -26,4 +26,7 @@ contextBridge.exposeInMainWorld("guardianApi", {
   onOpenApiDialog: (handler: () => void) => {
     ipcRenderer.on("guardian:openApiDialog", () => handler());
   },
+  onRefreshSections: (handler: () => void) => {
+    ipcRenderer.on("guardian:refreshSections", () => handler());
+  },
 });

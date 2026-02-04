@@ -15,6 +15,7 @@ declare global {
       onLog: (handler: (message: string) => void) => void;
       onError: (handler: (message: string) => void) => void;
       onOpenApiDialog: (handler: () => void) => void;
+      onRefreshSections: (handler: () => void) => void;
     };
   }
 }

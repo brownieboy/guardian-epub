@@ -42,6 +42,12 @@ function createWindow() {
             mainWindow?.webContents.send("guardian:openApiDialog");
           },
         },
+        {
+          label: "Refresh Sections",
+          click: () => {
+            mainWindow?.webContents.send("guardian:refreshSections");
+          },
+        },
       ],
     },
     { role: "windowMenu" },
