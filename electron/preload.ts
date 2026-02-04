@@ -9,6 +9,7 @@ type ProgressUpdate = {
 contextBridge.exposeInMainWorld("guardianApi", {
   loadSettings: () => ipcRenderer.invoke("settings:load"),
   saveSettings: (data: any) => ipcRenderer.invoke("settings:save", data),
+  resetSettings: () => ipcRenderer.invoke("settings:reset"),
   fetchSections: (apiKey: string) => ipcRenderer.invoke("guardian:fetchSections", apiKey),
   run: (options: { apiKey: string; sections: string[] }) =>
     ipcRenderer.invoke("guardian:run", options),
@@ -30,5 +31,8 @@ contextBridge.exposeInMainWorld("guardianApi", {
   },
   onRefreshSections: (handler: () => void) => {
     ipcRenderer.on("guardian:refreshSections", () => handler());
+  },
+  onResetSettings: (handler: () => void) => {
+    ipcRenderer.on("guardian:resetSettings", () => handler());
   },
 });

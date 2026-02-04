@@ -1,5 +1,5 @@
 import { app } from "electron";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync } from "fs";
 import path from "path";
 
 export type GuiSettings = {
@@ -37,5 +37,16 @@ export const saveSettings = (data: GuiSettings) => {
     writeFileSync(file, JSON.stringify(data, null, 2));
   } catch (error) {
     console.error("Error saving GUI settings:", error);
+  }
+};
+
+export const resetSettings = () => {
+  const file = getSettingsPath();
+  if (existsSync(file)) {
+    try {
+      unlinkSync(file);
+    } catch (error) {
+      console.error("Error clearing GUI settings:", error);
+    }
   }
 };

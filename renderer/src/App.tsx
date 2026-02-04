@@ -6,9 +6,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   FormControl,
   FormHelperText,
   TextField,
@@ -17,7 +14,6 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
   DndContext,
@@ -46,10 +42,10 @@ export default function App() {
   const [sections, setSections] = useState<string[]>([]);
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
   const [hasFetchedSections, setHasFetchedSections] = useState(false);
-  const [sectionsExpanded, setSectionsExpanded] = useState(false);
   const [apiKeyError, setApiKeyError] = useState("");
   const [showApiDialog, setShowApiDialog] = useState(false);
   const [pendingApiKey, setPendingApiKey] = useState("");
+  const [showResetDialog, setShowResetDialog] = useState(false);
   const [phase, setPhase] = useState("");
   const [progress, setProgress] = useState<ProgressUpdate | null>(null);
   const [log, setLog] = useState<string[]>([]);
@@ -77,6 +73,9 @@ export default function App() {
       } else {
         setLog(current => [...current, "Enter API key to refresh sections."]);
       }
+    });
+    window.guardianApi.onResetSettings(() => {
+      setShowResetDialog(true);
     });
 
     window.guardianApi
@@ -112,7 +111,6 @@ export default function App() {
       setSections([]);
       setSelectedSections([]);
       setApiKeyError("");
-      setSectionsExpanded(false);
     }
   }, [apiKey]);
 
@@ -167,9 +165,6 @@ export default function App() {
       setLog(current => [...current, `Fetched ${fetched.length} sections.`]);
       const fetchedOk = fetched.length > 0;
       setHasFetchedSections(fetchedOk);
-      if (!hasFetchedSections && fetchedOk) {
-        setSectionsExpanded(true);
-      }
       setSelectedSections(current =>
         current.filter(section => fetched.includes(section)),
       );
@@ -256,26 +251,24 @@ export default function App() {
 
   return (
     <div className="app">
-      <header>
-        <h1>Guardian ePub</h1>
-        {!hasFetchedSections && (
+      {!hasFetchedSections && (
+        <header>
+          <h1>Guardian ePub</h1>
           <p>
             Use Tools → API Key to enter your Guardian API key.
           </p>
-        )}
-      </header>
+        </header>
+      )}
 
       <section className="panel">
-        <Accordion
-          expanded={sectionsExpanded}
-          onChange={(_event, isExpanded) => setSectionsExpanded(isExpanded)}
-          disabled={!apiKey || !hasFetchedSections}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            Sections
-          </AccordionSummary>
-          <AccordionDetails>
-            <FormControl size="small" fullWidth>
+        <div className="sections-layout">
+          <div className="sections-card">
+            <div className="sections-card-header">Sections</div>
+            <FormControl
+              size="small"
+              fullWidth
+              disabled={!apiKey || !hasFetchedSections}
+            >
               <List className="sections-list" dense disablePadding>
                 <Grid container spacing={0}>
                   {sections.map(section => {
@@ -295,34 +288,36 @@ export default function App() {
                   })}
                 </Grid>
               </List>
-              <FormHelperText>
-                Select one or more sections.
-              </FormHelperText>
+              <FormHelperText>Select one or more sections.</FormHelperText>
             </FormControl>
-          </AccordionDetails>
-        </Accordion>
+          </div>
 
-        {selectedSections.length > 0 && (
           <div className="selected-sections">
             <div className="selected-sections-header">Selected order</div>
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={selectedSections}
-                strategy={verticalListSortingStrategy}
+            {selectedSections.length === 0 ? (
+              <div className="selected-sections-empty">
+                No sections selected yet.
+              </div>
+            ) : (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
               >
-                <div className="selected-sections-list">
-                  {selectedSections.map(section => (
-                    <SortableRow key={section} section={section} />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
+                <SortableContext
+                  items={selectedSections}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="selected-sections-list">
+                    {selectedSections.map(section => (
+                      <SortableRow key={section} section={section} />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="actions">
           <button
@@ -388,6 +383,35 @@ export default function App() {
         <DialogActions>
           <Button onClick={() => setShowApiDialog(false)}>Cancel</Button>
           <Button onClick={handleSaveApiKey}>Save</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={showResetDialog}
+        onClose={() => setShowResetDialog(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Reset Settings</DialogTitle>
+        <DialogContent>
+          This will clear your stored API key and section selections. Continue?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowResetDialog(false)}>No</Button>
+          <Button
+            onClick={async () => {
+              await window.guardianApi.resetSettings();
+              setApiKey("");
+              setSections([]);
+              setSelectedSections([]);
+              setHasFetchedSections(false);
+              setApiKeyError("");
+              setShowResetDialog(false);
+              setLog(current => [...current, "Settings cleared."]);
+            }}
+          >
+            Yes
+          </Button>
         </DialogActions>
       </Dialog>
     </div>
