@@ -18,6 +18,20 @@ import {
   ListItemText,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import {
+  DndContext,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import "./index.css";
 
 type ProgressUpdate = {
@@ -40,6 +54,7 @@ export default function App() {
   const [progress, setProgress] = useState<ProgressUpdate | null>(null);
   const [log, setLog] = useState<string[]>([]);
   const [result, setResult] = useState<{ epubPath?: string } | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -174,11 +189,16 @@ export default function App() {
       return;
     }
 
-    const response = await window.guardianApi.run({
-      apiKey,
-      sections: selectedSections,
-    });
-    setResult(response);
+    setIsGenerating(true);
+    try {
+      const response = await window.guardianApi.run({
+        apiKey,
+        sections: selectedSections,
+      });
+      setResult(response);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const toggleSection = (section: string) => {
@@ -190,16 +210,48 @@ export default function App() {
     });
   };
 
-  const moveSection = (index: number, direction: "up" | "down") => {
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDragEnd = (event: { active: any; over: any }) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) {
+      return;
+    }
     setSelectedSections(current => {
-      const next = [...current];
-      const targetIndex = direction === "up" ? index - 1 : index + 1;
-      if (targetIndex < 0 || targetIndex >= next.length) {
+      const oldIndex = current.indexOf(active.id);
+      const newIndex = current.indexOf(over.id);
+      if (oldIndex === -1 || newIndex === -1) {
         return current;
       }
-      [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
+      const next = [...current];
+      const [moved] = next.splice(oldIndex, 1);
+      next.splice(newIndex, 0, moved);
       return next;
     });
+  };
+
+  const SortableRow = ({ section }: { section: string }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id: section });
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    return (
+      <div ref={setNodeRef} style={style} className="selected-section-row">
+        <span>{section}</span>
+        <button
+          type="button"
+          className="drag-handle"
+          aria-label={`Reorder ${section}`}
+          {...attributes}
+          {...listeners}
+        >
+          <DragIndicatorIcon fontSize="small" />
+        </button>
+      </div>
+    );
   };
 
   return (
@@ -253,29 +305,22 @@ export default function App() {
         {selectedSections.length > 0 && (
           <div className="selected-sections">
             <div className="selected-sections-header">Selected order</div>
-            <div className="selected-sections-list">
-              {selectedSections.map((section, index) => (
-                <div key={section} className="selected-section-row">
-                  <span>{section}</span>
-                  <div className="selected-section-actions">
-                    <button
-                      type="button"
-                      onClick={() => moveSection(index, "up")}
-                      disabled={index === 0}
-                    >
-                      ↑
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => moveSection(index, "down")}
-                      disabled={index === selectedSections.length - 1}
-                    >
-                      ↓
-                    </button>
-                  </div>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={selectedSections}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="selected-sections-list">
+                  {selectedSections.map(section => (
+                    <SortableRow key={section} section={section} />
+                  ))}
                 </div>
-              ))}
-            </div>
+              </SortableContext>
+            </DndContext>
           </div>
         )}
 
@@ -283,7 +328,7 @@ export default function App() {
           <button
             type="button"
             onClick={handleRun}
-            disabled={!apiKey || selectedSections.length === 0}
+            disabled={!apiKey || selectedSections.length === 0 || isGenerating}
           >
             Generate ePub
           </button>

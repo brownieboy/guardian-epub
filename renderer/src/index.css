@@ -175,17 +175,18 @@ button:disabled {
   background: #f1f5f9;
 }
 
-.selected-section-actions {
-  display: flex;
-  gap: 6px;
-}
-
-.selected-section-actions button {
-  padding: 6px 10px;
+.drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
   border-radius: 8px;
+  border: none;
   background: #1e293b;
+  color: #fff;
+  cursor: grab;
 }
 
-.selected-section-actions button:disabled {
-  background: #94a3b8;
+.drag-handle:active {
+  cursor: grabbing;
 }
