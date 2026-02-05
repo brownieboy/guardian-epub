@@ -3,6 +3,7 @@
   "version": "1.2.0",
   "description": "Creates an ePub of the Guardian newspaper from the Guardian API",
   "type": "module",
+  "packageManager": "pnpm@10.28.2",
   "main": "dist-electron/main.cjs",
   "repository": {
     "type": "git",
@@ -87,7 +88,7 @@
     "axios": "^1.6.2",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
-    "enquirer": "file:../enquirer-mike-fork/enquirer-2.4.1.tgz",
+    "enquirer": "github:brownieboy/enquirer#bugfix/270-multiselect-with-defaults",
     "epub-gen": "^0.1.0",
     "jimp": "^0.22.10",
     "jsdom": "^23.0.1",

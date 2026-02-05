@@ -143,13 +143,11 @@ Notable runtime dependencies:
 - `jsdom`: link rewriting for local EPUB navigation.
 - `yargs`: CLI flags.
 
-This project currently depends on a local packaged fork of Enquirer:
+This project currently depends on a GitHub fork of Enquirer:
 
 ```json
-"enquirer": "file:../enquirer-mike-fork/enquirer-2.4.1.tgz"
+"enquirer": "github:brownieboy/enquirer#bugfix/270-multiselect-with-defaults"
 ```
-
-If you are setting up the repo on a new machine, you need that `.tgz` to exist at the referenced relative path or update the dependency.
 
 ## Development tips
 
