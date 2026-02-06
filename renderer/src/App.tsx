@@ -262,34 +262,44 @@ export default function App() {
 
       <section className="panel">
         <div className="sections-layout">
-          <div className="sections-card">
-            <div className="sections-card-header">Sections</div>
-            <FormControl
-              size="small"
-              fullWidth
-              disabled={!apiKey || !hasFetchedSections}
-            >
-              <List className="sections-list" dense disablePadding>
-                <Grid container spacing={0}>
-                  {sections.map(section => {
-                    const checked = selectedSections.includes(section);
-                    return (
-                      <Grid item key={section} xs={12} sm={6} md={4}>
-                        <ListItem
-                          onClick={() => toggleSection(section)}
-                          className="sections-list-item"
-                          disableGutters
-                        >
-                          <Checkbox checked={checked} />
-                          <ListItemText primary={section} />
-                        </ListItem>
-                      </Grid>
-                    );
-                  })}
-                </Grid>
-              </List>
-              <FormHelperText>Select one or more sections.</FormHelperText>
-            </FormControl>
+          <div className="sections-panel">
+            <div className="sections-card">
+              <div className="sections-card-header">Sections</div>
+              <FormControl
+                size="small"
+                fullWidth
+                disabled={!apiKey || !hasFetchedSections}
+              >
+                <List className="sections-list" dense disablePadding>
+                  <Grid container spacing={0}>
+                    {sections.map(section => {
+                      const checked = selectedSections.includes(section);
+                      return (
+                        <Grid item key={section} xs={12} sm={6} md={4}>
+                          <ListItem
+                            onClick={() => toggleSection(section)}
+                            className="sections-list-item"
+                            disableGutters
+                          >
+                            <Checkbox checked={checked} />
+                            <ListItemText primary={section} />
+                          </ListItem>
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                </List>
+              </FormControl>
+            </div>
+            <div className="actions">
+              <button
+                type="button"
+                onClick={handleRun}
+                disabled={!apiKey || selectedSections.length === 0 || isGenerating}
+              >
+                Generate ePub
+              </button>
+            </div>
           </div>
 
           <div className="selected-sections">
@@ -319,34 +329,6 @@ export default function App() {
           </div>
         </div>
 
-        <div className="actions">
-          <button
-            type="button"
-            onClick={handleRun}
-            disabled={!apiKey || selectedSections.length === 0 || isGenerating}
-          >
-            Generate ePub
-          </button>
-        </div>
-      </section>
-
-      <section className="panel">
-        <h2>Status</h2>
-        <div className="status">
-          <div>Phase: {phase || "-"}</div>
-          <div>
-            Progress: {progress ? `${progress.current}/${progress.total}` : "-"}
-          </div>
-          <div>Last message: {progress?.message ?? "-"}</div>
-        </div>
-        {result?.epubPath && (
-          <button
-            type="button"
-            onClick={() => window.guardianApi.openPath(result.epubPath!)}
-          >
-            Open generated file
-          </button>
-        )}
       </section>
 
       <section className="panel">
@@ -357,6 +339,15 @@ export default function App() {
             <div key={`${entry}-${index}`}>{entry}</div>
           ))}
         </div>
+        {result?.epubPath && (
+          <button
+            type="button"
+            className="open-file-button"
+            onClick={() => window.guardianApi.openPath(result.epubPath!)}
+          >
+            Open generated file
+          </button>
+        )}
       </section>
 
       <Dialog

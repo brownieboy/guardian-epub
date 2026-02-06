@@ -15,24 +15,38 @@ contextBridge.exposeInMainWorld("guardianApi", {
     ipcRenderer.invoke("guardian:run", options),
   openPath: (targetPath: string) => ipcRenderer.invoke("guardian:openPath", targetPath),
   onPhase: (handler: (phase: string) => void) => {
-    ipcRenderer.on("guardian:phase", (_event, phase) => handler(phase));
+    const listener = (_event: unknown, phase: string) => handler(phase);
+    ipcRenderer.on("guardian:phase", listener);
+    return () => ipcRenderer.removeListener("guardian:phase", listener);
   },
   onProgress: (handler: (progress: ProgressUpdate) => void) => {
-    ipcRenderer.on("guardian:progress", (_event, progress) => handler(progress));
+    const listener = (_event: unknown, progress: ProgressUpdate) => handler(progress);
+    ipcRenderer.on("guardian:progress", listener);
+    return () => ipcRenderer.removeListener("guardian:progress", listener);
   },
   onLog: (handler: (message: string) => void) => {
-    ipcRenderer.on("guardian:log", (_event, message) => handler(message));
+    const listener = (_event: unknown, message: string) => handler(message);
+    ipcRenderer.on("guardian:log", listener);
+    return () => ipcRenderer.removeListener("guardian:log", listener);
   },
   onError: (handler: (message: string) => void) => {
-    ipcRenderer.on("guardian:error", (_event, message) => handler(message));
+    const listener = (_event: unknown, message: string) => handler(message);
+    ipcRenderer.on("guardian:error", listener);
+    return () => ipcRenderer.removeListener("guardian:error", listener);
   },
   onOpenApiDialog: (handler: () => void) => {
-    ipcRenderer.on("guardian:openApiDialog", () => handler());
+    const listener = () => handler();
+    ipcRenderer.on("guardian:openApiDialog", listener);
+    return () => ipcRenderer.removeListener("guardian:openApiDialog", listener);
   },
   onRefreshSections: (handler: () => void) => {
-    ipcRenderer.on("guardian:refreshSections", () => handler());
+    const listener = () => handler();
+    ipcRenderer.on("guardian:refreshSections", listener);
+    return () => ipcRenderer.removeListener("guardian:refreshSections", listener);
   },
   onResetSettings: (handler: () => void) => {
-    ipcRenderer.on("guardian:resetSettings", () => handler());
+    const listener = () => handler();
+    ipcRenderer.on("guardian:resetSettings", listener);
+    return () => ipcRenderer.removeListener("guardian:resetSettings", listener);
   },
 });

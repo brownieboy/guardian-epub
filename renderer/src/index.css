@@ -14,7 +14,7 @@ body {
 }
 
 .app {
-  max-width: 960px;
+  max-width: 95%;
   margin: 0 auto;
   padding: 48px 24px 72px;
   display: grid;
@@ -67,10 +67,9 @@ select {
 }
 
 .sections-list {
-  max-height: 260px;
+  max-height: 300px;
   overflow: auto;
   border-radius: 12px;
-  border: 1px solid #cbd5f5;
   background: #fff;
 }
 
@@ -121,6 +120,10 @@ button:disabled {
   transform: none;
 }
 
+.open-file-button {
+  width: fit-content;
+}
+
 .status {
   display: grid;
   gap: 6px;
@@ -128,8 +131,9 @@ button:disabled {
 }
 
 .log {
-  max-height: 200px;
-  overflow: auto;
+  line-height: 1.4;
+  max-height: calc(10 * 1.4em + 24px);
+  overflow-y: auto;
   background: #0f172a;
   color: #f8fafc;
   padding: 12px;
@@ -154,14 +158,19 @@ button:disabled {
 
 .sections-layout {
   display: grid;
-  gap: 16px;
+  gap: 40px;
 }
 
 @media (min-width: 900px) {
   .sections-layout {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 3fr 1fr;
     align-items: start;
   }
+}
+
+.sections-panel {
+  display: grid;
+  gap: 16px;
 }
 
 .sections-card {
@@ -178,6 +187,10 @@ button:disabled {
 }
 
 .selected-sections {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px 14px;
   display: grid;
   gap: 10px;
 }
