@@ -68,6 +68,29 @@ Package:
 pnpm electron:package
 ```
 
+### Standalone GUI builds
+
+Build installers with:
+
+```bash
+pnpm electron:package
+```
+
+This runs `electron-builder` with the default targets for the current OS. You can also target specific platforms:
+
+```bash
+pnpm electron:package -- --mac --arm64
+pnpm electron:package -- --mac --x64
+pnpm electron:package -- --win
+pnpm electron:package -- --linux
+```
+
+Notes:
+
+- macOS builds must be created on a Mac.
+- Windows builds should be created on Windows.
+- Linux builds should be created on Linux.
+
 ## Legacy CLI App
 
 The project started as a Node.js CLI, and that code still exists. Most of the Guardian API and EPUB logic was originally written for the CLI and then extracted into the shared core. As a result, changes to CLI behavior can still affect the Electron GUI, because the GUI relies on the same core pipeline.
