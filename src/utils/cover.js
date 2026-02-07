@@ -41,18 +41,7 @@ export function selectCoverImageFromNews(articlesBySection) {
     return null;
   }
 
-  const sectionsByPriority = [];
-  const newsSection = articlesBySection.find(
-    sectionGroup => sectionGroup.section === "news",
-  );
-  if (newsSection) {
-    sectionsByPriority.push(newsSection);
-  }
-  for (const sectionGroup of articlesBySection) {
-    if (sectionGroup !== newsSection) {
-      sectionsByPriority.push(sectionGroup);
-    }
-  }
+  const sectionsByPriority = [...articlesBySection];
 
   for (const sectionGroup of sectionsByPriority) {
     for (const article of sectionGroup.articles || []) {
