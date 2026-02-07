@@ -129,3 +129,9 @@ ipcMain.handle("guardian:openPath", async (_event, targetPath: string) => {
     await shell.openPath(targetPath);
   }
 });
+
+ipcMain.handle("guardian:showItemInFolder", async (_event, targetPath: string) => {
+  if (targetPath) {
+    shell.showItemInFolder(targetPath);
+  }
+});

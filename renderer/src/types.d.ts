@@ -13,6 +13,7 @@ declare global {
       fetchSections: (apiKey: string) => Promise<string[]>;
       run: (options: { apiKey: string; sections: string[] }) => Promise<any>;
       openPath: (targetPath: string) => Promise<void>;
+      showItemInFolder: (targetPath: string) => Promise<void>;
       onPhase: (handler: (phase: string) => void) => () => void;
       onProgress: (handler: (progress: ProgressUpdate) => void) => () => void;
       onLog: (handler: (message: string) => void) => () => void;

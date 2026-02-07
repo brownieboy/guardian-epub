@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld("guardianApi", {
   run: (options: { apiKey: string; sections: string[] }) =>
     ipcRenderer.invoke("guardian:run", options),
   openPath: (targetPath: string) => ipcRenderer.invoke("guardian:openPath", targetPath),
+  showItemInFolder: (targetPath: string) => ipcRenderer.invoke("guardian:showItemInFolder", targetPath),
   onPhase: (handler: (phase: string) => void) => {
     const listener = (_event: unknown, phase: string) => handler(phase);
     ipcRenderer.on("guardian:phase", listener);

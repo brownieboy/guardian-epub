@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Button,
   Checkbox,
@@ -51,22 +51,44 @@ export default function App() {
   const [log, setLog] = useState<string[]>([]);
   const [result, setResult] = useState<{ epubPath?: string } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const logRef = useRef<HTMLDivElement | null>(null);
+  const folderButtonLabel = useMemo(() => {
+    return window.navigator.platform.toLowerCase().includes("mac")
+      ? "Reveal in Finder"
+      : "Open location";
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
-    window.guardianApi.onPhase(setPhase);
-    window.guardianApi.onProgress(setProgress);
-    window.guardianApi.onLog(message =>
+    const unsubPhase = window.guardianApi.onPhase(phaseValue => {
+      setPhase(phaseValue);
+      setLog(current => [...current, `Phase: ${phaseValue}`]);
+    });
+    const unsubProgress = window.guardianApi.onProgress(progressValue => {
+      setProgress(progressValue);
+      if (progressValue?.message) {
+        setLog(current => [
+          ...current,
+          `Progress: ${progressValue.current}/${progressValue.total} - ${progressValue.message}`,
+        ]);
+      } else {
+        setLog(current => [
+          ...current,
+          `Progress: ${progressValue.current}/${progressValue.total}`,
+        ]);
+      }
+    });
+    const unsubLog = window.guardianApi.onLog(message =>
       setLog(current => [...current, message]),
     );
-    window.guardianApi.onError(message =>
+    const unsubError = window.guardianApi.onError(message =>
       setLog(current => [...current, `Error: ${message}`]),
     );
-    window.guardianApi.onOpenApiDialog(() => {
+    const unsubOpenApi = window.guardianApi.onOpenApiDialog(() => {
       setPendingApiKey(apiKey);
       setShowApiDialog(true);
     });
-    window.guardianApi.onRefreshSections(() => {
+    const unsubRefresh = window.guardianApi.onRefreshSections(() => {
       const currentKey = apiKeyRef.current;
       if (currentKey) {
         handleFetchSections(currentKey);
@@ -74,7 +96,7 @@ export default function App() {
         setLog(current => [...current, "Enter API key to refresh sections."]);
       }
     });
-    window.guardianApi.onResetSettings(() => {
+    const unsubReset = window.guardianApi.onResetSettings(() => {
       setShowResetDialog(true);
     });
 
@@ -100,6 +122,13 @@ export default function App() {
       .catch(() => {});
 
     return () => {
+      unsubPhase();
+      unsubProgress();
+      unsubLog();
+      unsubError();
+      unsubOpenApi();
+      unsubRefresh();
+      unsubReset();
       isMounted = false;
     };
   }, []);
@@ -125,6 +154,12 @@ export default function App() {
       lastFetchedSections: sections,
     });
   }, [apiKey, selectedSections, hasFetchedSections, sections]);
+
+  useEffect(() => {
+    if (logRef.current) {
+      logRef.current.scrollTop = logRef.current.scrollHeight;
+    }
+  }, [log]);
 
   const validateApiKey = (value: string) => {
     if (!value || value.trim().length < 10) {
@@ -333,20 +368,31 @@ export default function App() {
 
       <section className="panel">
         <h2>Log</h2>
-        <div className="log">
+        <div className="log" ref={logRef}>
           {log.length === 0 && <div>No messages yet.</div>}
           {log.map((entry, index) => (
             <div key={`${entry}-${index}`}>{entry}</div>
           ))}
         </div>
         {result?.epubPath && (
-          <button
-            type="button"
-            className="open-file-button"
-            onClick={() => window.guardianApi.openPath(result.epubPath!)}
-          >
-            Open generated file
-          </button>
+          <div className="log-actions">
+            <button
+              type="button"
+              className="open-file-button"
+              onClick={() => window.guardianApi.openPath(result.epubPath!)}
+            >
+              Open generated file
+            </button>
+            <button
+              type="button"
+              className="open-file-button"
+              onClick={() =>
+                window.guardianApi.showItemInFolder(result.epubPath!)
+              }
+            >
+              {folderButtonLabel}
+            </button>
+          </div>
         )}
       </section>
 

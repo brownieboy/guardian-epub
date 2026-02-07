@@ -100,6 +100,30 @@ Notes:
 - Windows builds should be created on Windows.
 - Linux builds should be created on Linux.
 
+### macOS notarisation (optional)
+
+If you have Apple notarisation configured, the following scripts help automate the flow:
+
+```bash
+pnpm electron:mac:dmg:path
+pnpm electron:mac:notarise
+pnpm electron:mac:staple
+pnpm electron:mac:verify:dmg
+pnpm electron:mac:verify:app
+pnpm electron:mac:notarise:full
+```
+
+These scripts assume a configured `notarytool` keychain profile named `notary-api`.
+
+Code signing proves the app was built by you (or your team) and hasn’t been tampered with since it was signed. Notarisation is Apple’s automated malware scan and ticketing process for distributed apps. Developers typically do both when shipping a public macOS build so users aren’t blocked by Gatekeeper warnings and can install/run the app without extra security prompts. Once signing is configured, `electron-builder` will automatically sign each new macOS build with your configured Developer ID certificate.
+
+To set up signing and notarisation, see Apple’s official Developer ID and notarisation guidance.
+
+```text
+Developer ID (code signing): https://developer.apple.com/developer-id/
+Notarising macOS software: https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution
+```
+
 ## Legacy CLI App
 
 The project started as a Node.js CLI, and that code still exists. Most of the Guardian API and EPUB logic was originally written for the CLI and then extracted into the shared core. As a result, changes to CLI behavior can still affect the Electron GUI, because the GUI relies on the same core pipeline.

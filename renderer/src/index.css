@@ -124,6 +124,13 @@ button:disabled {
   width: fit-content;
 }
 
+.log-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .status {
   display: grid;
   gap: 6px;
