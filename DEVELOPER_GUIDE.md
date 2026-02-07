@@ -85,6 +85,15 @@ pnpm electron:package -- --win
 pnpm electron:package -- --linux
 ```
 
+Convenience aliases for the above commands:
+
+```bash
+pnpm electron:package:mac:arm
+pnpm electron:package:mac:x64
+pnpm electron:package:win
+pnpm electron:package:linux
+```
+
 Notes:
 
 - macOS builds must be created on a Mac.

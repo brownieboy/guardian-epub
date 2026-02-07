@@ -119,7 +119,7 @@ export async function fetchArticles(apiKey, sections, hooks = {}) {
 
 export async function createEpub(
   articlesBySection,
-  { outputDir, dateOverride, templatesDir } = {},
+  { outputDir, dateOverride, templatesDir, tempDir } = {},
   hooks = {},
 ) {
   const { dateString, timeString, dayOfWeek, timeStringDisplay } =
@@ -181,6 +181,11 @@ export async function createEpub(
     mkdirSync(targetDir, { recursive: true });
   }
 
+  const resolvedTempDir = tempDir || path.join(targetDir, "epub-temp");
+  if (!existsSync(resolvedTempDir)) {
+    mkdirSync(resolvedTempDir, { recursive: true });
+  }
+
   const coverPath = path.join(targetDir, "guardian-cover.jpg");
   const epubPath = path.join(targetDir, filename);
 
@@ -202,6 +207,7 @@ export async function createEpub(
     cover: coverPath,
     customHtmlTocTemplatePath: tocTemplatePath,
     customNcxTocTemplatePath: tocNcxTemplatePath,
+    tempDir: resolvedTempDir,
   };
 
   try {
@@ -223,7 +229,8 @@ export async function createEpub(
 }
 
 export async function runGuardianEpub(options, hooks = {}) {
-  const { apiKey, sections, outputDir, dateOverride, templatesDir } = options || {};
+  const { apiKey, sections, outputDir, dateOverride, templatesDir, tempDir } =
+    options || {};
   if (!apiKey || !sections || sections.length === 0) {
     throw new Error("runGuardianEpub requires apiKey and sections.");
   }
@@ -246,7 +253,7 @@ export async function runGuardianEpub(options, hooks = {}) {
   hooks.onPhase?.("buildEpub");
   const epubResult = await createEpub(
     articlesBySection,
-    { outputDir, dateOverride, templatesDir },
+    { outputDir, dateOverride, templatesDir, tempDir },
     hooks,
   );
 

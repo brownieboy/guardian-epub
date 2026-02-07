@@ -102,10 +102,12 @@ ipcMain.handle("settings:reset", async () => {
 ipcMain.handle(
   "guardian:run",
   async (_event, options: { apiKey: string; sections: string[] }) => {
-    const templatesDir = path.join(process.cwd(), "src");
+    const templatesDir = path.join(app.getAppPath(), "src");
+    const outputDir = app.getPath("downloads");
+    const tempDir = path.join(app.getPath("userData"), "epub-temp");
     try {
       return await runGuardianEpub(
-        { ...options, templatesDir },
+        { ...options, templatesDir, outputDir, tempDir },
         {
           onPhase: phase => mainWindow?.webContents.send("guardian:phase", phase),
           onProgress: progress =>

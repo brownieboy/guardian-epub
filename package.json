@@ -23,6 +23,10 @@
     "electron:main:build": "esbuild electron/main.ts --bundle --platform=node --format=cjs --external:electron --external:jsdom --external:jimp --external:epub-gen --outfile=dist-electron/main.cjs",
     "electron:preload:build": "esbuild electron/preload.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist-electron/preload.cjs",
     "electron:package": "pnpm electron:build && electron-builder",
+    "electron:package:mac:arm": "pnpm electron:package -- --mac --arm64",
+    "electron:package:mac:x64": "pnpm electron:package -- --mac --x64",
+    "electron:package:win": "pnpm electron:package -- --win",
+    "electron:package:linux": "pnpm electron:package -- --linux",
     "cli:run": "node ./src/get-guardian.js",
     "cli:key": "node ./src/get-guardian-api-key.js",
     "cli:sea:build": "webpack --mode production",
@@ -80,7 +84,9 @@
     "files": [
       "dist-electron/**",
       "renderer/dist/**",
-      "package.json"
+      "package.json",
+      "src/guardian-toc-html.ejs",
+      "src/guardian-toc-ncx.ejs"
     ],
     "mac": {
       "target": [
