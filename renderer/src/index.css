@@ -75,8 +75,8 @@ select {
 
 .sections-list-item {
   cursor: pointer;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .sections-list .MuiGrid-item {
@@ -88,7 +88,11 @@ select {
 }
 
 .sections-list .MuiCheckbox-root {
-  padding: 4px;
+  padding: 0;
+}
+
+.sections-list .MuiListItem-root {
+  min-height: 22px;
 }
 
 .actions {
