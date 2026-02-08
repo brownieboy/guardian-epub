@@ -27,6 +27,15 @@ Download the latest GUI build for your OS from the Releases page and install it.
 
 Your GUI settings are stored in the app's user data directory.
 
+## Send the EPUB to Kindle
+
+If you want to read the generated file on a Kindle, Amazon's **Send to Kindle** tools are the simplest approach:
+
+- **Send to Kindle for Web:** Upload the `.epub` via `https://amazon.com/sendtokindle` from any browser (works on Windows, Mac, or Linux).
+- **Send to Kindle desktop app:** Amazon also provides **Send to Kindle** desktop apps for both **Mac** and **Windows** if you prefer a drag-and-drop workflow.  These can be downloaded from the Send to Kindle for Weg page (see previous).
+- **Send to Kindle by email:** Find your device's **Send-to-Kindle email address** in **Manage Your Content and Devices → Preferences → Personal Document Settings**, then email the `.epub` to that address.
+- **Approved senders:** Amazon will only accept documents sent from email addresses listed in your **Approved Personal Document Email List** (also under **Personal Document Settings**).
+
 ### Demo
 
 The animated GIF below shows the process of creating the ePub, and then opening it and reading it in the Calibre eReader on a Mac.
