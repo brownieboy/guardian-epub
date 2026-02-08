@@ -31,7 +31,7 @@
     "electron:mac:notarise": "xcrun notarytool submit \"release/Guardian ePub-${npm_package_version}-arm64.dmg\" --keychain-profile \"notary-api\" --wait",
     "electron:mac:staple": "xcrun stapler staple \"release/Guardian ePub-${npm_package_version}-arm64.dmg\"",
     "electron:mac:verify:dmg": "spctl -a -vv \"release/Guardian ePub-${npm_package_version}-arm64.dmg\" || true",
-    "electron:mac:verify:app": "hdiutil attach \"release/Guardian ePub-${npm_package_version}-arm64.dmg\" && spctl -a -vv --type execute \"/Volumes/Guardian ePub ${npm_package_version}-arm64 1/Guardian ePub.app\" && hdiutil detach \"/Volumes/Guardian ePub ${npm_package_version}-arm64 1\"",
+    "electron:mac:verify:app": "hdiutil detach \"/Volumes/Guardian ePub ${npm_package_version}-arm64\" >/dev/null 2>&1 || true; MOUNT=$(mktemp -d /tmp/GuardianEpubVerify.XXXX) && hdiutil attach -nobrowse -mountpoint \"$MOUNT\" \"release/Guardian ePub-${npm_package_version}-arm64.dmg\" && spctl -a -vv --type execute \"$MOUNT/Guardian ePub.app\"; test -n \"$MOUNT\" && hdiutil detach \"$MOUNT\"",
     "electron:mac:notarise:full": "npm run electron:mac:notarise && npm run electron:mac:staple && npm run electron:mac:verify:app",
     "cli:run": "node ./src/get-guardian.js",
     "cli:key": "node ./src/get-guardian-api-key.js",
@@ -111,6 +111,9 @@
         "AppImage"
       ],
       "icon": "assets/icons/512x512.png"
+    },
+    "dmg": {
+      "sign": true
     }
   },
   "keywords": [
