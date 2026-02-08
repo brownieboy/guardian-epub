@@ -29,13 +29,11 @@ Your GUI settings are stored in the app's user data directory.
 
 ### Demo
 
-The animated GIF below shows the process of creating the ePub, and then opening it and reading it in the Calibre eReader.
+The animated GIF below shows the process of creating the ePub, and then opening it and reading it in the Calibre eReader on a Mac.
 
-![Guardian ePub in action](./capture-guardian-epub.gif)
+![Guardian ePub in action](./docs/images/version2.0.0-gui-demo.gif)
 
-I've edited this animation to cut out the dull bits, such as the waiting for the API calls to complete. It's slower than this in real life, especially if you select a lot of sections.
-
-I've also skipped the part where you have to enter API key, as you'll likely only ever do that once (and I don't want you see *my* key!).
+I've skipped the part where you have to enter API key at the start, as you'll likely only ever do that once (and I don't want you see *my* key!).
 
 ## Developing The App
 
