@@ -1,8 +1,8 @@
 # guardian-epub
 
-Need to read the latest edition of the Guardian newspaper on your Kindle? This is the app for you.
+Need to read the latest edition of the Guardian newspaper on your Kindle?  This is the app for you.
 
-Guardian ePub is now Electron-based GUI app for Windows, Mac, and Linux. It creates an ePub book from the current edition of the Guardian using the [Guardian's Open Platform](https://open-platform.theguardian.com/).
+Guardian ePub is an Electron-based GUI app for Windows, Mac, and Linux. It creates an ePub book from the current edition of the Guardian using the [Guardian's Open Platform](https://open-platform.theguardian.com/).
 
 ## Pre-requisites
 
