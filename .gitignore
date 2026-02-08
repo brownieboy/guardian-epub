@@ -2,6 +2,7 @@
 guardian-open-platform-key.json
 *.epub
 .DS_Store
+.guardian-epub.env
 *.tgz
 /.vscode
 src/guardian-cover.jpg

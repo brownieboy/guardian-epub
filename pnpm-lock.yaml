@@ -17,6 +17,9 @@ importers:
       date-fns-tz:
         specifier: ^2.0.0
         version: 2.0.1(date-fns@2.30.0)
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.6.1
       enquirer:
         specifier: github:brownieboy/enquirer#bugfix/270-multiselect-with-defaults
         version: https://codeload.github.com/brownieboy/enquirer/tar.gz/de35fc86a03eb4208e0a862fe9d93d1eb16fc9f8
@@ -29,6 +32,9 @@ importers:
       jsdom:
         specifier: ^23.0.1
         version: 23.2.0
+      nodemailer:
+        specifier: ^6.9.16
+        version: 6.10.1
       ora:
         specifier: ^5.4.1
         version: 5.4.1
@@ -2390,6 +2396,10 @@ packages:
   dotenv-expand@5.1.0:
     resolution: {integrity: sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==}
 
+  dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
+    engines: {node: '>=12'}
+
   dotenv@9.0.2:
     resolution: {integrity: sha512-I9OvvrHp4pIARv4+x9iuewrWycX6CcZtoAu1XrzPxc5UygMJXJZYmBsynku8IkrJwgypE5DGNjDPmPRhDCptUg==}
     engines: {node: '>=10'}
@@ -3281,6 +3291,10 @@ packages:
 
   node-releases@2.0.27:
     resolution: {integrity: sha512-nmh3lCkYZ3grZvqcCH+fjmQ7X+H0OeZgP40OierEaAptX4XofMh5kwNbWh7lBduUzCcV/8kZ+NDLCwm2iorIlA==}
+
+  nodemailer@6.10.1:
+    resolution: {integrity: sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==}
+    engines: {node: '>=6.0.0'}
 
   normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
@@ -6840,6 +6854,8 @@ snapshots:
 
   dotenv-expand@5.1.0: {}
 
+  dotenv@16.6.1: {}
+
   dotenv@9.0.2: {}
 
   dunder-proto@1.0.1:
@@ -7849,6 +7865,8 @@ snapshots:
       whatwg-url: 5.0.0
 
   node-releases@2.0.27: {}
+
+  nodemailer@6.10.1: {}
 
   normalize-path@3.0.0: {}
 
