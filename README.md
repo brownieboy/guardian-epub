@@ -48,8 +48,6 @@ I've skipped the part where you have to enter API key at the start, as you'll li
 
 The project originally shipped as a Node.js CLI, and that legacy CLI is still available. It is a secondary option intended for advanced or automated workflows; most users should prefer the GUI.
 
-If you want automation (e.g. running on a server or NAS), the CLI can be scheduled via cron or a task scheduler to generate an EPUB on a regular schedule. See the developer guide for details on the underlying flow.
-
 ### CLI setup and usage (from this repo)
 
 Standalone CLI binaries are no longer released. To use the CLI, clone this repo and run it directly:
@@ -114,6 +112,12 @@ Notes:
 - `EPUB_DIR` should point to the folder where the `guardian-*.epub` files are created (often the repo root).
 - You can also pass a custom env path with `GUARDIAN_EPUB_ENV=/path/to/.guardian-epub.env`.
 - `GMAIL_APP_PASSWORD` is a Gmail App Password (not your normal Gmail password).
+
+### Automation
+
+If you want automation (e.g. running on a server or NAS), the CLI can be scheduled via cron or a task scheduler to generate an EPUB on a regular schedule. See the developer guide for details on the underlying flow.
+
+For example, I run this on a Synology NAS (always on), using a cron job to create and email the EPUB to my Kindle at weekends.
 
 ## Developing The App
 
