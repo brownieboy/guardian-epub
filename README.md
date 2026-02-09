@@ -44,6 +44,77 @@ The animated GIF below shows the process of creating the ePub, and then opening 
 
 I've skipped the part where you have to enter API key at the start, as you'll likely only ever do that once (and I don't want you see *my* key!).
 
+## Legacy CLI (Secondary Option)
+
+The project originally shipped as a Node.js CLI, and that legacy CLI is still available. It is a secondary option intended for advanced or automated workflows; most users should prefer the GUI.
+
+If you want automation (e.g. running on a server or NAS), the CLI can be scheduled via cron or a task scheduler to generate an EPUB on a regular schedule. See the developer guide for details on the underlying flow.
+
+### CLI setup and usage (from this repo)
+
+Standalone CLI binaries are no longer released. To use the CLI, clone this repo and run it directly:
+
+Pre-requisites:
+- Node.js (v18+ recommended).
+- npm (bundled with Node).
+- pnpm (via Corepack or npm).
+- git (to clone this repo).
+- A terminal/command prompt.
+
+```bash
+git clone git@github.com:brownieboy/guardian-epub.git
+cd guardian-epub
+pnpm install
+```
+
+First-time setup (stores your Guardian API key in `~/.guardianEpub`):
+
+```bash
+pnpm cli:key
+```
+
+Run the CLI (will prompt for section selection on first run):
+
+```bash
+pnpm cli:run
+```
+
+Reselect sections later:
+
+```bash
+pnpm cli:run --selections
+```
+
+### Optional emailer (Send to Kindle)
+
+The repo includes a simple emailer script for sending the latest generated EPUB as an attachment (e.g. to your Kindle address). It currently supports Gmail only and expects configuration via a local env file.
+
+1. Create a repo-local env file (do **not** commit it):
+
+```
+.guardian-epub.env
+```
+
+2. Add the following variables:
+
+```bash
+GMAIL_USER=your@gmail.com
+GMAIL_APP_PASSWORD=your_app_password
+KINDLE_EMAIL=your_kindle@kindle.com
+EPUB_DIR=/absolute/path/to/guardian-epub
+```
+
+3. Run the emailer:
+
+```bash
+pnpm cli:send
+```
+
+Notes:
+- `EPUB_DIR` should point to the folder where the `guardian-*.epub` files are created (often the repo root).
+- You can also pass a custom env path with `GUARDIAN_EPUB_ENV=/path/to/.guardian-epub.env`.
+- `GMAIL_APP_PASSWORD` is a Gmail App Password (not your normal Gmail password).
+
 ## Developing The App
 
 For development setup, architecture notes, and build details, see the developer guide:

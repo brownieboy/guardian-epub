@@ -35,6 +35,7 @@
     "electron:mac:notarise:full": "npm run electron:mac:notarise && npm run electron:mac:staple && npm run electron:mac:verify:app",
     "cli:run": "node ./src/get-guardian.js",
     "cli:key": "node ./src/get-guardian-api-key.js",
+    "cli:send": "node ./scripts/send-latest-epub.js",
     "cli:sea:build": "webpack --mode production",
     "cli:sea:build:dev": "webpack --mode development",
     "cli:sea:blob": "node --experimental-sea-config sea-config.json",
