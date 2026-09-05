@@ -47,6 +47,21 @@ function createUrlToFileMap(articlesBySection) {
   return urlToFileMap;
 }
 
+export function sanitizeArticleHtml(articleContent) {
+  // Guardian article bodies can contain embedded media/custom elements
+  // (gu-atom video embeds, iframes, video/source tags) that Amazon's
+  // Send-to-Kindle EPUB conversion cannot handle, causing the resulting
+  // file to fail to open on Kindle.
+  const dom = new JSDOM(articleContent);
+  const document = dom.window.document;
+
+  document
+    .querySelectorAll("gu-atom, iframe, video, source")
+    .forEach(el => el.remove());
+
+  return dom.serialize();
+}
+
 function updateArticleLinks(articleContent, urlToFileMap) {
   // If we've pulled a page down locally, then change URLs to point to there and
   // not to the online version
@@ -139,8 +154,9 @@ export async function createEpub(
     };
 
     sectionGroup.articles.forEach(article => {
+      const sanitizedContent = sanitizeArticleHtml(article.fields.body);
       const updatedContent = updateArticleLinks(
-        article.fields.body,
+        sanitizedContent,
         urlToFileMap,
       );
       const articleFilename = urlToFileMap[article.webUrl];
