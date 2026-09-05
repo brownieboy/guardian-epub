@@ -4,7 +4,7 @@
 
   <head>
     <meta name="dtb:uid" content="<%= bookId %>" />
-    <meta name="dtb:depth" content="1" />
+    <meta name="dtb:depth" content="2" />
     <meta name="dtb:totalPageCount" content="0" />
     <meta name="dtb:maxPageNumber" content="0" />
   </head>
@@ -34,8 +34,6 @@
             </navLabel>
             <content
               src="<%= item.filename || (item.articles && item.articles[0] && item.articles[0].filename) || '#' %>" />
-          </navPoint>
-          <% } %>
             <% if(item.articles) { %>
               <% item.articles.forEach(function(article) { %>
                 <navPoint id="navPoint-<%= playOrder %>" playOrder="<%= playOrder++ %>">
@@ -50,6 +48,8 @@
                 </navPoint>
                 <% }); %>
                   <% } %>
-                    <% }); %>
+          </navPoint>
+          <% } %>
+            <% }); %>
   </navMap>
 </ncx>
