@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import enquirer from "enquirer";
-import { getApiFile, setApiKey } from "./utils/files.js";
+import { getApiFilePath, setApiKey } from "./utils/files.js";
 
 async function saveGuardianApiKey() {
-  const apiFile = getApiFile();
+  const apiFile = getApiFilePath();
 
   // Prompt the user for the API key
   const answers = await enquirer.prompt([
